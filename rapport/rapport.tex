@@ -5,10 +5,38 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
+\usepackage{titlesec}
+\usepackage{minted}
 \author{Alexandre Moine}
 \title{Rapport de projet}
+
+\titleformat{\subsection}
+{\normalfont\normalsize\bfseries}{Question \thesubsection}{1em}{}
+
 \begin{document}
 \maketitle
+
+\section{Introduction}
+% aussi présent pour le numbering
+
+\section{Entrées} % TODO: trouver comment rajouter "appetizers"
+
+\subsection{}
+\begin{minted}{ocaml}
+  predicate no_3_consecutive_zeros_sub (a:array int) (l:int) =
+  forall i. 0 <= i < l-2 -> not (a[i] = a[i+1] = a[i+2] = 0)
+\end{minted}
+La borne supérieure du prédicat est $l-2$ car %TODO
+
+\subsection{}
+\begin{minted}{ocaml}
+  predicate no_3_consecutive_zeros (a:array int) =
+  no_3_consecutive_zeros_sub a a.length
+\end{minted}
+En effet, il n'y a pas 3 zéros consécutifs dans $a$ si et seulement s'il n'a pas 3 zéros consécutifs entre les indices $0$ et la taille de $a$.
+
+\subsection{}
+
 \end{document}
 %%% Local Variables:
 %%% mode: latex
