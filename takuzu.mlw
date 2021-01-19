@@ -87,8 +87,11 @@ let no_3_consecutive_zeros_version_2 (a : array int) : bool
   let ref last2 = a[0] in
   let ref last1 = a[1] in
   try
-    for i = 0 to a.length - 3 do
-      invariant { __FORMULA_TO_BE_COMPLETED__ }
+    for i = 2 to a.length - 1 do
+      invariant { last1 = a[i-1] }
+      invariant { last2 = a[i-2] }
+      invariant { not (a[i] = a[i-1] = a[i-2] = 0) -> no_3_consecutive_zeros_sub a (i+1) }
+      invariant { i = a.length -> no_3_consecutive_zeros_sub a i }
       let v = a[i] in
       if v = 0 && last1 = 0 && last2 = 0 then raise TripleFound;
       last2 <- last1;
@@ -114,7 +117,7 @@ let no_3_consecutive_zeros_version_3 (a : array int) : bool
   =
   let ref count_zeros = 0 in
   try
-    for i=__EXPRESSION_TO_BE_COMPLETED__ to __EXPRESSION_TO_BE_COMPLETED__ do
+    for i=0 to a.length - 1 do
       invariant { __FORMULA_TO_BE_COMPLETED__ }
       if a[i] = 0 then
         if count_zeros = 2 then raise TripleFound
