@@ -148,8 +148,8 @@ let no_3_consecutive_zeros_version_3 (a : array int) : bool
 let rec ghost function num_occ (e:int) (f:int -> int) (i j :int) : int
   (** number of `l`, `i <= l < j`, such that `f l` is equal to `e` *)
   variant { j-i }
-  = if i>j then 0 else
-    if f j = e then 1 + num_occ e f i (j-1) else num_occ e f i (j-1)
+  = if i>=j then 0 else
+    if f (j-1) = e then 1 + num_occ e f i (j-1) else num_occ e f i (j-1)
 
 (**
 
@@ -158,12 +158,12 @@ let rec ghost function num_occ (e:int) (f:int -> int) (i j :int) : int
 *)
 
 let count_number_of (e:int) (a:array int) : int
-  ensures { __FORMULA_TO_BE_COMPLETED__ }
+  ensures { result = num_occ e (fun i -> a[i]) 0 a.length}
   =
   let ref n = 0 in
   for i=0 to a.length - 1 do
-    invariant { __FORMULA_TO_BE_COMPLETED__ }
-    __CODE_TO_BE_COMPLETED__
+    invariant { n = num_occ e (fun i -> a[i]) 0 i }
+    if a[i] = e then n <- 1+n;
   done;
   n
 
