@@ -120,13 +120,11 @@ let no_3_consecutive_zeros_version_3 (a : array int) : bool
   try
     for i=0 to a.length - 1 do
     invariant { count_zeros = 0 \/ count_zeros = 1 \/ count_zeros = 2 }
-    invariant { count_zeros = 0 /\ no_3_consecutive_zeros_sub a i -> no_3_consecutive_zeros_sub a (i+1) }
     invariant { count_zeros = 0 /\ i > 0-> a[i-1] <> 0 }
     invariant { count_zeros = 1 /\ i > 1-> a[i-2] <> 0 }
-    invariant { count_zeros >= 1 -> a[i-1] = 0 }
-    invariant { count_zeros >= 2 -> a[i-2] = 0 }
-    invariant { count_zeros >= 1 -> i > 0 }
-    invariant { count_zeros >= 2 -> i > 1 }
+    invariant { count_zeros >= 1 -> a[i-1] = 0 /\ i > 0}
+    invariant { count_zeros >= 2 -> a[i-2] = 0 /\ i > 1}
+    invariant { count_zeros = 0 /\ no_3_consecutive_zeros_sub a i -> no_3_consecutive_zeros_sub a (i+1) }
     invariant { count_zeros = 1 /\ no_3_consecutive_zeros_sub a i -> no_3_consecutive_zeros_sub a (i+1) }
     invariant { no_3_consecutive_zeros_sub a i }
       if a[i] = 0 then
