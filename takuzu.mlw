@@ -118,7 +118,8 @@ let no_3_consecutive_zeros_version_3 (a : array int) : bool
   let ref count_zeros = 0 in
   try
     for i=0 to a.length - 1 do
-      invariant { __FORMULA_TO_BE_COMPLETED__ }
+      invariant { count_zeros >= 1 -> a[i-1] = 0 }
+      invariant { count_zeros = 2 -> a[i-2] = 0 }
       if a[i] = 0 then
         if count_zeros = 2 then raise TripleFound
         else count_zeros <- count_zeros + 1
@@ -146,9 +147,9 @@ let no_3_consecutive_zeros_version_3 (a : array int) : bool
 
 let rec ghost function num_occ (e:int) (f:int -> int) (i j :int) : int
   (** number of `l`, `i <= l < j`, such that `f l` is equal to `e` *)
-  variant { __VARIANT_TO_BE_COMPLETED__ }
-  = if __FORMULA_TO_BE_COMPLETED__ then 0 else
-    if __FORMULA_TO_BE_COMPLETED__ then 1 + num_occ e f i (j-1) else num_occ e f i (j-1)
+  variant { j-i }
+  = if i>j then 0 else
+    if f j = e then 1 + num_occ e f i (j-1) else num_occ e f i (j-1)
 
 (**
 
