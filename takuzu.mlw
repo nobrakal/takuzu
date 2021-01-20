@@ -108,10 +108,6 @@ implementation 3
 
 *)
 
-(*
-lemma witness_3_consecutive_zeros : forall a:array int, i:int.
- i > 1 -> a[i] = a[i-1] = a[i-2] = 0 -> not (no_3_consecutive_zeros_sub a (i+1))
-*)
 
 let no_3_consecutive_zeros_version_3 (a : array int) : bool
   ensures { result = True <-> no_3_consecutive_zeros a }
