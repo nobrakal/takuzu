@@ -364,7 +364,7 @@ let rec function num_occ (e:elem) (g:takuzu_grid) (start incr:int) (l:int)
       `l` first elements of the chunk `(start,incr)` of the grid `g` *)
   requires { g.length = 64 }
   requires { valid_chunk start incr }
-  requires { 0 <= l < 8 }
+  requires { 0 <= l <= 8 }
   variant { l }
 = if l=0 then 0 else
   if eq (acc g start incr (l-1)) e
