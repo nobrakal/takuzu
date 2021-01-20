@@ -14,12 +14,6 @@
 
 module Appetizers
 
-predicate __FORMULA_TO_BE_COMPLETED__
-constant __TERM_TO_BE_COMPLETED__ : 'a
-constant __VARIANT_TO_BE_COMPLETED__ : int
-let constant __EXPRESSION_TO_BE_COMPLETED__ : int = 0
-let constant __CODE_TO_BE_COMPLETED__ : unit = ()
-
 use int.Int
 use array.Array
 
