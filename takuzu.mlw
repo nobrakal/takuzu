@@ -436,14 +436,17 @@ predicate identical_columns (g:takuzu_grid) (s1 s2:int) =
   identical_chunks g s1 s2 8 8
 
 let check_rule_3_for_column (g:takuzu_grid) (start:int) : unit
-  requires { __FORMULA_TO_BE_COMPLETED__ }
+  requires { g.length = 64 }
+  requires { 0 <= start < 8 }
   ensures { forall k. 0 <= k < 8 /\ k <> start ->
                not (identical_columns g start k) }
   raises { Invalid -> true }
 =
   for i=0 to 7 do
-    invariant { __FORMULA_TO_BE_COMPLETED__ }
-      (* CODE TO BE COMPLETED *)raise Invalid
+    invariant { forall k. 0 <= k < i /\ k <> start ->
+                  not (identical_columns g start k)  }
+      if i <> start && check_identical_chunks g start i 8 
+      then raise Invalid;
   done
 
 predicate identical_rows (g:takuzu_grid) (s1 s2:int) =
