@@ -417,20 +417,23 @@ predicate identical_chunks (g:takuzu_grid) (s1 s2:int) (incr:int) (l:int)
     and `(s2,i)`, in their first `l` elements, have no empty cells and
     are pointwise identical *)
 = forall k. 0 <= k < l ->
-    __FORMULA_TO_BE_COMPLETED__
+    acc g s1 incr k = acc g s2 incr k
+    /\ acc g s1 incr k <> Empty
 
 exception DiffFound
 
 let check_identical_chunks g start1 start2 incr : bool
-  requires { __FORMULA_TO_BE_COMPLETED__ }
+  requires { g.length = 64 }
+  requires { valid_chunk start1 incr }
+  requires { valid_chunk start2 incr }
   ensures { result = True <-> identical_chunks g start1 start2 incr 8 }
 = try
     for i=0 to 7 do
-      invariant { __FORMULA_TO_BE_COMPLETED__ }
+      invariant { identical_chunks g start1 start2 incr i }
       match acc g start1 incr i, acc g start2 incr i with
-      | Zero,Zero -> __CODE_TO_BE_COMPLETED__
-      | One,One -> __CODE_TO_BE_COMPLETED__
-      | _ -> __CODE_TO_BE_COMPLETED__
+      | Zero,Zero -> ()
+      | One,One -> ()
+      | _ -> raise DiffFound
       end
     done;
     True
