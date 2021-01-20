@@ -539,7 +539,8 @@ let check_cell_change (g:takuzu_grid) (n:int) (e:elem) : unit
     any check fails. It should be used incrementally, as it assumes
     that the rules are already satisfied for cell whose number is
     strictly smaller than `n`. *)
-  requires { __FORMULA_TO_BE_COMPLETED__ }
+  requires { g.length = 64 }
+  requires { 0 <= n < 64 }
   requires { valid_up_to (g[n<-Empty]) n }
   writes { g }
   ensures { valid_up_to g (n+1) }
@@ -577,12 +578,13 @@ exception SolutionFound
 
 
 let rec solve_aux (g:takuzu_grid) (n:int) : unit
+  requires { g.length = 64 }
   requires { 0 <= n <= 64 }
   requires { full_up_to g n }
   requires { valid_up_to g n }
   writes { g }
   variant { 64-n }
-  ensures { __FORMULA_TO_BE_COMPLETED__ }
+  ensures { full_up_to g (n+1) }
   raises { SolutionFound -> extends (old g) g /\ full_up_to g 64 /\ valid_up_to g 64 }
 =
   if n=64 then raise SolutionFound;
