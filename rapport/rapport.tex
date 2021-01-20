@@ -10,8 +10,10 @@
 \author{Alexandre Moine}
 \title{Rapport de projet}
 
+\newcounter{question}
+
 \titleformat{\subsection}
-{\normalfont\normalsize\bfseries}{Question \thesubsection}{1em}{}
+{\normalfont\normalsize\bfseries}{Question \stepcounter{question}\thequestion}{1em}{}
 
 \begin{document}
 \maketitle
