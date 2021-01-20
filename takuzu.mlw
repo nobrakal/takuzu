@@ -478,21 +478,23 @@ predicate rule_1_for_cell (g:takuzu_grid) (n:int) =
     satisfied for the row and the column of the cell number `n` *)
   let cs = column_start_index n in
   let rs = row_start_index n in
-  __FORMULA_TO_BE_COMPLETED__
+  rule_1_for_chunk g rs 1 /\ rule_1_for_chunk g cs 8
 
 predicate rule_2_for_cell (g:takuzu_grid) (n:int) =
 (** `rule_2_for_cell g n` is true whenever the second Takuzu rule is
     satisfied for the row and the column of the cell number `n` *)
   let cs = column_start_index n in
   let rs = row_start_index n in
-  __FORMULA_TO_BE_COMPLETED__
+  rule_2_for_chunk g rs 1 /\ rule_2_for_chunk g cs 8
 
 predicate rule_3_for_cell (g:takuzu_grid) (n:int) =
 (** `rule_3_for_cell g n` is true whenever the third Takuzu rule is
     satisfied for the row and the column of the cell number `n` *)
   let cs = column_start_index n in
   let rs = row_start_index n in
-  forall i. 0 <= i < 8 -> __FORMULA_TO_BE_COMPLETED__
+  forall i. 0 <= i < 8 ->
+    (i*8 <> rs -> not (identical_rows g rs (i*8)))
+    /\ (i <> cs -> not (identical_columns g cs i))
 
 predicate valid_for_cell (g:takuzu_grid) (i:int) =
 (** `valid_for_cell g n` is true whenever cell number `n` satisfy the
@@ -507,11 +509,11 @@ predicate valid_up_to (g:takuzu_grid) (n:int)
 
 (** {4 QUESTION 17} *)
 
-
 let check_at_cell (g:takuzu_grid) (n:int) : unit
 (** `check_at_cell g n` returns normally if the grid `g` satisfy the
     rules for cell `n`. *)
-  requires { __FORMULA_TO_BE_COMPLETED__ }
+  requires { g.length = 64 }
+  requires { 0 <= n < 64 }
   ensures { valid_for_cell g n }
   raises { Invalid -> true }
 =
