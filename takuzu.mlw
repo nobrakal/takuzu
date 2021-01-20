@@ -109,9 +109,9 @@ let no_3_consecutive_zeros_version_3 (a : array int) : bool
   let ref count_zeros = 0 in
   try
     for i=0 to a.length - 1 do
-    invariant { 0 <= count_zeros < 3 }
-    invariant { forall j. j < 2 -> count_zeros = j -> i > j -> a [i-j-1] <> 0 }
-    invariant { forall j. 0 < j -> count_zeros >= j -> a[i-j] = 0 /\ i >= j }
+    invariant { 0 <= count_zeros < 3 /\ count_zeros <= i}
+    invariant { i > count_zeros -> a [i-count_zeros-1] <> 0 }
+    invariant { forall j. 0 < j <= count_zeros -> a[i-j] = 0 }
     invariant { no_3_consecutive_zeros_sub a i }
       if a[i] = 0 then
         if count_zeros = 2 then raise TripleFound
@@ -323,7 +323,8 @@ let check_rule_1_for_chunk (g:takuzu_grid) start incr
   let ref count_zeros = 0 in
   let ref count_ones = 0 in
   for i=0 to 7 do
-    (* invariant { no_3_consecutive_identical_elem g start incr i } *)
+    invariant { 0 <= count_zeros < 3 /\ 0 <= count_ones < 3 }
+    invariant { no_3_consecutive_identical_elem g start incr i }
     match acc g start incr i with
       | Zero ->
         if count_zeros = 2 then raise Invalid else
