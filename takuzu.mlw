@@ -1,4 +1,4 @@
-
+(* TODO verify use Array eq *)
 (** {1 Solving Takuzu Puzzles}
 
   MPRI course 2-36-1 Proof of Programs - Project 2020-2021
@@ -536,7 +536,7 @@ forall k. 0 <= k < n -> g1[k] = g2[k]
 lemma framing_array : forall g1 g2:array elem, n:int.
 equal_up_to g1 g2 (n+1) -> valid_up_to g1 n -> valid_up_to g2 n
 
-(* This lemma is proved automaticaly *)
+(* This lemma is proved automatically *)
 lemma equal_up_to_removed_update : forall g:array elem, e1 e2:elem, n:int.
 equal_up_to (g[n <- e1]) (g[n <- e2][n <- e1]) (n+1)
 
@@ -556,7 +556,8 @@ let check_cell_change (g:takuzu_grid) (n:int) (e:elem) : unit
   requires { valid_up_to (g[n<-Empty]) n }
   writes { g }
   ensures { valid_up_to g (n+1) }
-  raises { Invalid -> true }
+  ensures { g = (old g)[n <- e]} (* TODO ADDED *)
+  raises { Invalid -> g = (old g)[n <- e] } (* TODO ADDED *)
 =
   g[n] <- e;
   assert { valid_up_to g[n<-Empty] n };
@@ -583,11 +584,17 @@ predicate extends (g1:takuzu_grid) (g2:takuzu_grid)
 
 (** {4 QUESTION 21} *)
 
-
-
-
 exception SolutionFound
 
+lemma valid_rewrite_empty : forall g:array elem, n:int.
+  valid_up_to g n -> valid_up_to g[n <- Empty] n
+
+lemma full_up_to_less : forall g:array elem, n:int.
+  full_up_to g (n+1) -> full_up_to g[n <- Empty] n
+
+  (* TODO name + PRETTIER *)
+lemma array_eq_small_mod : forall g1: array elem, e1 e2 e3:elem, n :int.
+ g1[n] = e1 -> g1[n <- e3][n <- e2][n <- e1] = g1
 
 let rec solve_aux (g:takuzu_grid) (n:int) : unit
   requires { g.length = 64 }
@@ -596,7 +603,7 @@ let rec solve_aux (g:takuzu_grid) (n:int) : unit
   requires { valid_up_to g n }
   writes { g }
   variant { 64-n }
-  ensures { full_up_to g (n+1) }
+  ensures { g = old g }
   raises { SolutionFound -> extends (old g) g /\ full_up_to g 64 /\ valid_up_to g 64 }
 =
   if n=64 then raise SolutionFound;
