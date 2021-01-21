@@ -534,10 +534,14 @@ predicate equal_up_to (g1 g2: array 'a) (n:int) =
 forall k. 0 <= k < n -> g1[k] = g2[k]
 
 lemma framing_array : forall g1 g2:array elem, n:int.
-equal_up_to g1 g2 (n+1) -> valid_up_to g1 n <-> valid_up_to g2 n
+equal_up_to g1 g2 (n+1) -> valid_up_to g1 n -> valid_up_to g2 n
 
+(* This lemma is proved automaticaly *)
 lemma equal_up_to_removed_update : forall g:array elem, e1 e2:elem, n:int.
 equal_up_to (g[n <- e1]) (g[n <- e2][n <- e1]) (n+1)
+
+lemma framing_valid_up_to : forall g: array elem, e:elem, n :int.
+valid_up_to (g[n<-Empty]) n -> valid_for_cell g[n <- e] n -> valid_up_to g[n <- e] (n+1)
 
 let check_cell_change (g:takuzu_grid) (n:int) (e:elem) : unit
 (** `check_cell_change g n e` takes a grid `g` that satisfies the
