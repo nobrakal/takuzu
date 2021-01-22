@@ -189,64 +189,10 @@ Definition array_eq {a:Type} {a_WT:WhyType a} (a1:array a) (a2:array a) :
   ((length a1) = (length a2)) /\
   map_eq_sub (elts a1) (elts a2) 0%Z (length a1).
 
-Axiom equal_up_to_refl :
-  forall {a:Type} {a_WT:WhyType a},
-  forall (g:array a) (n:Numbers.BinNums.Z),
-  (0%Z <= n)%Z /\ (n < (length g))%Z -> array_eq_sub g g 0%Z n.
-
-Axiom equal_up_to_useless_mod' :
-  forall (g1:array elem) (g2:array elem) (e:elem) (n:Numbers.BinNums.Z)
-    (m:Numbers.BinNums.Z),
-  (0%Z <= m)%Z /\ (m < (length g1))%Z -> (0%Z <= n)%Z /\ (n <= m)%Z ->
-  array_eq_sub g1 g2 0%Z n <-> array_eq_sub g1 (mixfix_lblsmnrb g2 m e) 0%Z n.
-
-Axiom equal_up_to_useless_mod :
-  forall (g:array elem) (e:elem) (n:Numbers.BinNums.Z) (m:Numbers.BinNums.Z),
-  (0%Z <= m)%Z /\ (m < (length g))%Z -> (0%Z <= n)%Z /\ (n <= m)%Z ->
-  array_eq_sub g (mixfix_lblsmnrb g m e) 0%Z n.
-
-Axiom valid_up_to_morphism :
-  forall (g1:array elem) (g2:array elem) (n:Numbers.BinNums.Z),
-  array_eq_sub g1 g2 0%Z n -> valid_up_to g1 n <-> valid_up_to g2 n.
-
-Axiom valid_up_to_useless_mod :
-  forall (g:array elem) (e:elem) (n:Numbers.BinNums.Z) (m:Numbers.BinNums.Z),
-  (0%Z <= m)%Z /\ (m < (length g))%Z -> (0%Z <= n)%Z /\ (n <= m)%Z ->
-  valid_up_to g n <-> valid_up_to (mixfix_lblsmnrb g m e) n.
-
-Axiom valid_up_to_extend :
-  forall (g:array elem) (e:elem) (n:Numbers.BinNums.Z), valid_up_to g n ->
-  valid_for_cell (mixfix_lblsmnrb g n e) n ->
-  valid_up_to (mixfix_lblsmnrb g n e) (n + 1%Z)%Z.
-
-(* Why3 assumption *)
-Definition full_up_to (g:array elem) (n:Numbers.BinNums.Z) : Prop :=
-  forall (k:Numbers.BinNums.Z), (0%Z <= k)%Z /\ (k < n)%Z ->
-  ~ ((mixfix_lbrb g k) = Empty).
-
-(* Why3 assumption *)
-Definition extends (g1:array elem) (g2:array elem) : Prop :=
-  forall (k:Numbers.BinNums.Z), (0%Z <= k)%Z /\ (k < 64%Z)%Z ->
-  ~ ((mixfix_lbrb g1 k) = Empty) -> ((mixfix_lbrb g2 k) = (mixfix_lbrb g1 k)).
-
-Axiom full_up_to_morphism :
-  forall (g1:array elem) (g2:array elem) (n:Numbers.BinNums.Z),
-  array_eq_sub g1 g2 0%Z n -> full_up_to g1 n -> full_up_to g2 n.
-
-Axiom full_up_to_less :
-  forall (g:array elem) (n:Numbers.BinNums.Z), full_up_to g (n + 1%Z)%Z ->
-  full_up_to g n.
-
-Require Import Lia.
+Axiom array_eq_sym :
+  forall (g1:array elem) (g2:array elem), array_eq g1 g2 -> array_eq g2 g1.
 
 (* Why3 goal *)
-Theorem valid_up_to_less :
-  forall (g:array elem) (n:Numbers.BinNums.Z), valid_up_to g (n + 1%Z)%Z ->
-  valid_up_to g n.
-(* Why3 intros g n h1. *)
-Proof.
-  intros g n h1 i H.
-  apply h1.
-  lia.
-Qed.
-
+Theorem valid_up_to_morphism :
+  forall (g1:array elem) (g2:array elem) (n:Numbers.BinNums.Z),
+  array_eq g1 g2 -> valid_up_to g1 n -> valid_up_to g2 n.
