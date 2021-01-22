@@ -543,12 +543,6 @@ lemma equal_up_to_useless_mod' : forall g1 g2: array elem, e:elem, n m: int.
 lemma equal_up_to_useless_mod : forall g: array elem, e:elem, n m: int.
   0 <= m < g.length -> 0 <= n <= m -> equal_up_to g g[m <- e] n
 
-lemma valid_up_to_morphism : forall g1 g2:array elem, n:int.
-  equal_up_to g1 g2 n -> valid_up_to g1 n <-> valid_up_to g2 n
-
-lemma valid_up_to_useless_mod : forall g: array elem, e:elem, n m:int.
-  0 <= m < g.length -> 0 <= n <= m -> valid_up_to g n <-> valid_up_to g[m <- e] n
-
 let check_cell_change (g:takuzu_grid) (n:int) (e:elem) : unit
 (** `check_cell_change g n e` takes a grid `g` that satisfies the
     rules up to cell `n` (not included).  it sets cell `n` to the
@@ -614,9 +608,6 @@ lemma equal_up_to_simpl : forall g1 g2 : array elem, n:int.
 lemma equal_equal_up_to : forall g1 g2:array elem, n:int.
   0 <= n <= g1.length ->
   array_eq g1 g2 -> equal_up_to g1 g2 n
-
-lemma valid_up_to_useless_mod' : forall g: array elem, e:elem, n:int.
-  0 <= n < g.length -> valid_up_to g n <-> valid_up_to g[n <- e] n
 
 let rec solve_aux (g:takuzu_grid) (n:int) : unit
   requires { g.length = 64 }
