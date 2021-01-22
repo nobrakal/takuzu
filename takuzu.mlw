@@ -549,9 +549,6 @@ lemma valid_up_to_morphism : forall g1 g2:array elem, n:int.
 lemma valid_up_to_useless_mod : forall g: array elem, e:elem, n m:int.
   0 <= m < g.length -> 0 <= n <= m -> valid_up_to g n <-> valid_up_to g[m <- e] n
 
-lemma valid_up_to_extend : forall g: array elem, e:elem, n :int.
-  valid_up_to g n -> valid_for_cell g[n <- e] n -> valid_up_to g[n <- e] (n+1)
-
 let check_cell_change (g:takuzu_grid) (n:int) (e:elem) : unit
 (** `check_cell_change g n e` takes a grid `g` that satisfies the
     rules up to cell `n` (not included).  it sets cell `n` to the
@@ -571,10 +568,6 @@ let check_cell_change (g:takuzu_grid) (n:int) (e:elem) : unit
   g[n] <- e;
   assert { valid_up_to g[n<-Empty] n };
   check_at_cell g n
-
-
-
-
 
 
 (** {3 The main algorithm} *)
@@ -610,7 +603,16 @@ lemma array_eq_sym : forall g1 g2 : array 'a.
 lemma equal_up_to_sym : forall g1 g2 : array 'a, n:int.
   equal_up_to g1 g2 n -> equal_up_to g2 g1 n
 
+lemma array_eq_simpl : forall g1 g2: array 'a.
+  array_eq g1 g2 -> forall k. 0 <= k < g1.length -> g1[k] = g2[k]
+  
+lemma equal_up_to_simpl : forall g1 g2 : array elem, n:int.
+  g1.length = g2.length ->
+  0 <= n <= g1.length ->
+  (forall k. 0 <= k < g1.length -> g1[k] = g2[k]) -> equal_up_to g1 g2 n
+
 lemma equal_equal_up_to : forall g1 g2:array elem, n:int.
+  0 <= n <= g1.length ->
   array_eq g1 g2 -> equal_up_to g1 g2 n
 
 lemma valid_up_to_useless_mod' : forall g: array elem, e:elem, n:int.

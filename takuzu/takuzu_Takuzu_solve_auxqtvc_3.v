@@ -214,11 +214,6 @@ Axiom valid_up_to_useless_mod :
   (0%Z <= m)%Z /\ (m < (length g))%Z -> (0%Z <= n)%Z /\ (n <= m)%Z ->
   valid_up_to g n <-> valid_up_to (mixfix_lblsmnrb g m e) n.
 
-Axiom valid_up_to_extend :
-  forall (g:array elem) (e:elem) (n:Numbers.BinNums.Z), valid_up_to g n ->
-  valid_for_cell (mixfix_lblsmnrb g n e) n ->
-  valid_up_to (mixfix_lblsmnrb g n e) (n + 1%Z)%Z.
-
 (* Why3 assumption *)
 Definition full_up_to (g:array elem) (n:Numbers.BinNums.Z) : Prop :=
   forall (k:Numbers.BinNums.Z), (0%Z <= k)%Z /\ (k < n)%Z ->
@@ -250,9 +245,23 @@ Axiom equal_up_to_sym :
   forall (g1:array a) (g2:array a) (n:Numbers.BinNums.Z),
   array_eq_sub g1 g2 0%Z n -> array_eq_sub g2 g1 0%Z n.
 
+Axiom array_eq_simpl :
+  forall {a:Type} {a_WT:WhyType a},
+  forall (g1:array a) (g2:array a), array_eq g1 g2 ->
+  forall (k:Numbers.BinNums.Z), (0%Z <= k)%Z /\ (k < (length g1))%Z ->
+  ((mixfix_lbrb g1 k) = (mixfix_lbrb g2 k)).
+
+Axiom equal_up_to_simpl :
+  forall (g1:array elem) (g2:array elem) (n:Numbers.BinNums.Z),
+  ((length g1) = (length g2)) -> (0%Z <= n)%Z /\ (n <= (length g1))%Z ->
+  (forall (k:Numbers.BinNums.Z), (0%Z <= k)%Z /\ (k < (length g1))%Z ->
+   ((mixfix_lbrb g1 k) = (mixfix_lbrb g2 k))) ->
+  array_eq_sub g1 g2 0%Z n.
+
 Axiom equal_equal_up_to :
   forall (g1:array elem) (g2:array elem) (n:Numbers.BinNums.Z),
-  array_eq g1 g2 -> array_eq_sub g1 g2 0%Z n.
+  (0%Z <= n)%Z /\ (n <= (length g1))%Z -> array_eq g1 g2 ->
+  array_eq_sub g1 g2 0%Z n.
 
 Axiom valid_up_to_useless_mod' :
   forall (g:array elem) (e:elem) (n:Numbers.BinNums.Z),
@@ -295,15 +304,17 @@ Axiom Requires3 : ((length g2) = 64%Z).
 
 Axiom Requires4 : (0%Z <= n)%Z /\ (n < 64%Z)%Z.
 
+Require Import Lia.
+
 (* Why3 goal *)
 Theorem solve_aux'vc : valid_up_to (mixfix_lblsmnrb g2 n Empty) n.
 Proof.
   destruct Requires4.
   apply valid_up_to_useless_mod'.
-  - rewrite Requires3; easy.
+  - now rewrite Requires3.
   - apply (valid_up_to_morphism g1).
     + apply equal_equal_up_to; try easy.
+      rewrite H4,Requires; lia.
       apply array_eq_sym, Ensures2.
     + apply valid_up_to_less, Ensures.
 Qed.
-
