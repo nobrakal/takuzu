@@ -533,19 +533,19 @@ use array.ArrayEq
 
 predicate equal_up_to (g1 g2: array 'a) (n:int) =
   array_eq_sub g1 g2 0 n
-  
+
 lemma equal_up_to_refl : forall g: array 'a, n:int.
   0 <= n < g.length -> equal_up_to g g n
 
 lemma equal_up_to_useless_mod' : forall g1 g2: array elem, e:elem, n m: int.
-  0 <= m < g1.length -> 0 <= n <= m -> equal_up_to g1 g2 n -> equal_up_to g1 g2[m <- e] n
+  0 <= m < g1.length -> 0 <= n <= m -> equal_up_to g1 g2 n <-> equal_up_to g1 g2[m <- e] n
 
 lemma equal_up_to_useless_mod : forall g: array elem, e:elem, n m: int.
   0 <= m < g.length -> 0 <= n <= m -> equal_up_to g g[m <- e] n
 
 lemma valid_up_to_morphism : forall g1 g2:array elem, n:int.
   equal_up_to g1 g2 n -> valid_up_to g1 n <-> valid_up_to g2 n
-  
+
 lemma valid_up_to_useless_mod : forall g: array elem, e:elem, n m:int.
   0 <= m < g.length -> 0 <= n <= m -> valid_up_to g n <-> valid_up_to g[m <- e] n
 
@@ -565,8 +565,8 @@ let check_cell_change (g:takuzu_grid) (n:int) (e:elem) : unit
   requires { valid_up_to (g[n<-Empty]) n }
   writes { g }
   ensures { valid_up_to g (n+1) }
-  ensures { g = (old g)[n <- e]} (* TODO ADDED *)
-  raises { Invalid -> g = (old g)[n <- e] } (* TODO ADDED *)
+  ensures { array_eq g (old g)[n <- e]} (* TODO ADDED *)
+  raises { Invalid -> array_eq g (old g)[n <- e] } (* TODO ADDED *)
 =
   g[n] <- e;
   assert { valid_up_to g[n<-Empty] n };
@@ -594,16 +594,27 @@ predicate extends (g1:takuzu_grid) (g2:takuzu_grid)
 (** {4 QUESTION 21} *)
 
 exception SolutionFound
-  
+
 lemma full_up_to_morphism : forall g1 g2:array elem, n:int.
   equal_up_to g1 g2 n -> full_up_to g1 n -> full_up_to g2 n
-  
+
 lemma full_up_to_less : forall g:array elem, n:int.
   full_up_to g (n+1) -> full_up_to g n
 
-  (* TODO name + PRETTIER *)
-lemma array_eq_small_mod : forall g1: array elem, e1 e2 e3:elem, n :int.
- g1[n] = e1 -> g1[n <- e3][n <- e2][n <- e1] = g1
+lemma valid_up_to_less : forall g:array elem, n:int.
+  valid_up_to g (n+1) -> valid_up_to g n
+
+lemma array_eq_sym : forall g1 g2 : array 'a.
+  array_eq g1 g2 -> array_eq g2 g1
+
+lemma equal_up_to_sym : forall g1 g2 : array 'a, n:int.
+  equal_up_to g1 g2 n -> equal_up_to g2 g1 n
+
+lemma equal_equal_up_to : forall g1 g2:array elem, n:int.
+  array_eq g1 g2 -> equal_up_to g1 g2 n
+
+lemma valid_up_to_useless_mod' : forall g: array elem, e:elem, n:int.
+  0 <= n < g.length -> valid_up_to g n <-> valid_up_to g[n <- e] n
 
 let rec solve_aux (g:takuzu_grid) (n:int) : unit
   requires { g.length = 64 }
@@ -612,7 +623,7 @@ let rec solve_aux (g:takuzu_grid) (n:int) : unit
   requires { valid_up_to g n }
   writes { g }
   variant { 64-n }
-  ensures { g = old g }
+  ensures { array_eq g (old g) }
   raises { SolutionFound -> extends (old g) g /\ full_up_to g 64 /\ valid_up_to g 64 }
 =
   if n=64 then raise SolutionFound;
