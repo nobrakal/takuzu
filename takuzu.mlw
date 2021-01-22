@@ -596,7 +596,7 @@ predicate extends (g1:takuzu_grid) (g2:takuzu_grid)
 exception SolutionFound
   
 lemma full_up_to_morphism : forall g1 g2:array elem, n:int.
-  array_eq g1 g2 -> full_up_to g1 n -> full_up_to g2 n
+  equal_up_to g1 g2 n -> full_up_to g1 n -> full_up_to g2 n
   
 lemma full_up_to_less : forall g:array elem, n:int.
   full_up_to g (n+1) -> full_up_to g n
