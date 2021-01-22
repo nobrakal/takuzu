@@ -540,6 +540,7 @@ equal_up_to g1 g2 (n+1) -> valid_up_to g1 n -> valid_up_to g2 n
 lemma equal_up_to_removed_update : forall g:array elem, e1 e2:elem, n:int.
 equal_up_to (g[n <- e1]) (g[n <- e2][n <- e1]) (n+1)
 
+(* TODO reformulate this *)
 lemma framing_valid_up_to : forall g: array elem, e:elem, n :int.
 valid_up_to (g[n<-Empty]) n -> valid_for_cell g[n <- e] n -> valid_up_to g[n <- e] (n+1)
 
@@ -586,11 +587,22 @@ predicate extends (g1:takuzu_grid) (g2:takuzu_grid)
 
 exception SolutionFound
 
-lemma valid_rewrite_empty : forall g:array elem, n:int.
-  valid_up_to g n -> valid_up_to g[n <- Empty] n
+use array.ArrayEq
 
+lemma equal_useless_mod : forall g: array 'a, e: 'a, n:int.
+  g[n] = e -> array_eq g g[n <- e]
+
+lemma array_eq_imp_equal_up_to : forall g1 g2: array 'a, n:int.
+  0 <= n <= g1.length -> array_eq g1 g2 -> equal_up_to g1 g2 n
+
+lemma valid_up_to_morphism : forall g1 g2:array elem, n:int.
+  valid_up_to g1 n -> equal_up_to g1 g2 n -> valid_up_to g2 n
+  
+lemma full_up_to_morphism : forall g1 g2:array elem, n:int.
+  array_eq g1 g2 -> full_up_to g1 n -> full_up_to g2 n
+  
 lemma full_up_to_less : forall g:array elem, n:int.
-  full_up_to g (n+1) -> full_up_to g[n <- Empty] n
+  full_up_to g (n+1) -> full_up_to g n
 
   (* TODO name + PRETTIER *)
 lemma array_eq_small_mod : forall g1: array elem, e1 e2 e3:elem, n :int.
