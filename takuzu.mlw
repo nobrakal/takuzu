@@ -233,12 +233,6 @@ use int.Int
 use array.Array
 use int.ComputerDivision
 
-predicate __FORMULA_TO_BE_COMPLETED__
-constant __TERM_TO_BE_COMPLETED__ : 'a
-constant __VARIANT_TO_BE_COMPLETED__ : int
-let constant __EXPRESSION_TO_BE_COMPLETED__ : int = 0
-let constant __CODE_TO_BE_COMPLETED__ : unit = ()
-
 
 (**
 
@@ -530,7 +524,7 @@ let check_at_cell (g:takuzu_grid) (n:int) : unit
 (** {4 QUESTIONS 18, 19 AND 20} *)
 
 use array.ArrayEq
-  
+
 lemma valid_up_to_morphism : forall g1 g2 n.
   array_eq g1 g2 -> valid_up_to g1 n <-> valid_up_to g2 n
 
