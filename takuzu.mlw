@@ -305,14 +305,13 @@ predicate rule_1_for_chunk (g:takuzu_grid) (start incr:int) =
 
 (** {4 QUESTION 11} *)
 
-
 let check_rule_1_for_chunk (g:takuzu_grid) start incr
 (** `check_no_3_consecutive_identical_elements g s i` check whether
     the chunk `(s,i)` in grid `g` is satisfiable *)
   requires { g.length = 64 }
   requires { valid_chunk start incr }
   ensures { rule_1_for_chunk g start incr }
-  raises { Invalid -> true }
+  raises { Invalid -> not (rule_1_for_chunk g start incr) }
 =
   let ref count_zeros = 0 in
   let ref count_ones = 0 in
@@ -321,6 +320,8 @@ let check_rule_1_for_chunk (g:takuzu_grid) start incr
     invariant { 0 <= count_ones < 3  /\ count_ones <= i}
     invariant { i > count_zeros -> acc g start incr (i-count_zeros-1) <> Zero }
     invariant { i > count_ones -> acc g start incr (i-count_ones-1) <> One }
+    invariant { forall j. 0 < j <= count_zeros -> acc g start incr (i-j) = Zero }
+    invariant { forall j. 0 < j <= count_ones ->  acc g start incr (i-j) = One }
     invariant { no_3_consecutive_identical_elem g start incr i }
     match acc g start incr i with
       | Zero ->
@@ -379,7 +380,7 @@ let check_rule_2_for_chunk (g:takuzu_grid) start incr : unit
   requires { g.length = 64 }
   requires { valid_chunk start incr }
   ensures { rule_2_for_chunk g start incr }
-  raises { Invalid -> true }
+  raises { Invalid -> not (rule_2_for_chunk g start incr) }
   =
   if count_number_of Zero g start incr > 4 then raise Invalid;
   if count_number_of One  g start incr > 4 then raise Invalid;
@@ -434,7 +435,8 @@ let check_rule_3_for_column (g:takuzu_grid) (start:int) : unit
   requires { 0 <= start < 8 }
   ensures { forall k. 0 <= k < 8 /\ k <> start ->
                not (identical_columns g start k) }
-  raises { Invalid -> true }
+  raises { Invalid -> exists k. 0 <= k < 8 /\ k <> start ->
+               identical_columns g start k }
 =
   for i=0 to 7 do
     invariant { forall k. 0 <= k < i /\ k <> start ->
@@ -451,7 +453,8 @@ let check_rule_3_for_row (g:takuzu_grid) (start:int) : unit
   requires { 0 <= start <= 56 /\ mod start 8 = 0 }
   ensures { forall k. 0 <= k < 8 /\ 8*k <> start ->
                not (identical_rows g start (8*k)) }
-  raises { Invalid -> true }
+  raises { Invalid ->  exists k. 0 <= k < 8 /\ 8*k <> start ->
+               identical_rows g start (8*k) }
 =
   for i=0 to 7 do
     invariant { forall k. 0 <= k < i /\ k*8 <> start ->
@@ -509,7 +512,7 @@ let check_at_cell (g:takuzu_grid) (n:int) : unit
   requires { g.length = 64 }
   requires { 0 <= n < 64 }
   ensures { valid_for_cell g n }
-  raises { Invalid -> true }
+  raises { Invalid -> not (valid_for_cell g n) }
 =
   let col_start = column_start_index n in
   let row_start = row_start_index n in
