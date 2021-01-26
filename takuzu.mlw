@@ -561,9 +561,10 @@ lemma valid_for_cell_morphism : forall g1 g2 i.
   g1.length = 64 -> 0 <= i < 64 -> array_eq g1 g2 -> valid_for_cell g1 i -> valid_for_cell g2 i
 
 lemma valid_up_to_morphism_aux : forall g1 g2 n.
-  g1.length = 64 -> array_eq g1 g2 -> valid_up_to g1 n -> valid_up_to g2 n
+  g1.length = 64 -> 0 <= n < 64 -> array_eq g1 g2 -> valid_up_to g1 n -> valid_up_to g2 n
 
 lemma valid_up_to_morphism : forall g1 g2 n.
+  0 <= n < 64 ->
   g1.length = 64 -> array_eq g1 g2 -> valid_up_to g1 n <-> valid_up_to g2 n
 
 lemma valid_up_to_extend : forall g e n.
