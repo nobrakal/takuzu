@@ -546,13 +546,24 @@ lemma valid_chunk_row_start_index: forall i.
 
 lemma valid_for_cell_1 : forall g1 g2 i.
   g1.length = 64 -> 0 <= i < 64 -> array_eq g1 g2 -> rule_1_for_cell g1 i -> rule_1_for_cell g2 i
-  
-lemma num_occ_morphism : forall g1 g2 e start incr l.
-  g1.length = 64 -> valid_chunk start incr -> 0 <= l <= 8 ->
-  array_eq g1 g2 -> num_occ e g1 start incr l = num_occ e g2 start incr l
+
+let rec lemma num_occ_morphism (g1 g2:array elem) (e:elem) (start incr l:int)
+  requires { g1.length = 64 /\ valid_chunk start incr /\ 0 <= l <= 8 }
+  requires { array_eq g1 g2 }
+  ensures {num_occ e g1 start incr l = num_occ e g2 start incr l}
+  variant { l }
+= if l > 0 then num_occ_morphism g1 g2 e start incr (l-1)
 
 lemma valid_for_cell_2 : forall g1 g2 i.
   g1.length = 64 -> 0 <= i < 64 -> array_eq g1 g2 -> rule_2_for_cell g1 i -> rule_2_for_cell g2 i
+
+lemma valid_chunk_8 : forall l.
+  0 <= l < 8 -> valid_chunk (l*8) 1
+
+lemma identical_chunks_morphism : forall g1 g2 s1 s2 incr l.
+  g1.length = 64 -> array_eq g1 g2 ->
+  valid_chunk s1 incr -> valid_chunk s2 incr -> 0 <= l <= 8 ->
+  identical_chunks g1 s1 s2 incr l -> identical_chunks g2 s1 s2 incr l
 
 lemma valid_for_cell_3 : forall g1 g2 i.
   g1.length = 64 -> 0 <= i < 64 -> array_eq g1 g2 -> rule_3_for_cell g1 i -> rule_3_for_cell g2 i
