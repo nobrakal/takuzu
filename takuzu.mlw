@@ -578,6 +578,21 @@ lemma valid_up_to_morphism : forall g1 g2 n.
   0 <= n < 64 ->
   g1.length = 64 -> array_eq g1 g2 -> valid_up_to g1 n <-> valid_up_to g2 n
 
+lemma rule_1_extend : forall g:array elem, e:elem, n:int.
+  valid_for_cell g[n <- e] n ->
+  forall i. 0 <= i < n + 1 ->
+  rule_1_for_cell g[n <- Empty] i -> rule_1_for_cell g[n <- e] i
+
+lemma rule_2_extend : forall g:array elem, e:elem, n:int.
+  valid_for_cell g[n <- e] n ->
+  forall i. 0 <= i < n + 1 ->
+  rule_2_for_cell g[n <- Empty] i -> rule_2_for_cell g[n <- e] i
+
+lemma rule_3_extend : forall g:array elem, e:elem, n:int.
+  valid_for_cell g[n <- e] n ->
+  forall i. 0 <= i < n + 1 ->
+  rule_3_for_cell g[n <- Empty] i -> rule_3_for_cell g[n <- e] i
+
 lemma valid_up_to_extend : forall g e n.
   valid_up_to g[n <- Empty] n -> valid_for_cell g[n <- e] n -> valid_up_to g[n <- e] (n+1)
 
