@@ -530,12 +530,6 @@ use array.ArrayEq
 lemma array_eq_sym : forall g1 g2: array 'a.
   array_eq g1 g2 -> array_eq g2 g1
 
-predicate eq_alt (g1 g2:array 'a) =
-  forall k. 0 <= k < g1.length -> g1[k] = g2[k]
-
-lemma array_eq_alt : forall g1 g2: array 'a.
-  array_eq g1 g2 -> eq_alt g1 g2
-
 lemma acc_morphism : forall g1 g2 s i k.
   array_eq g1 g2 -> g1.length = 64 -> valid_chunk s i -> 0 <= k < 8
   -> acc g1 s i k = acc g2 s i k
