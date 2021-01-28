@@ -163,13 +163,35 @@ predicate rule_2_for_chunk (g:takuzu_grid) (start incr:int) =
 let check_rule_2_for_chunk (g:takuzu_grid) start incr : unit
   requires { g.length = 64 /\ valid_chunk start incr }
   ensures { rule_2_for_chunk g start incr }
-  raises { Invalid -> not (rule_2_for_chunk g start incr) }
-  =
+  raises { Invalid -> not (rule_2_for_chunk g start incr) } =
   if count_number_of Zero g start incr > 4 || count_number_of One  g start incr > 4
   then raise Invalid
 \end{minted}
 
+Le prédicat est calqué sur la définition de la deuxième règle.
+Les préconditions de $check\_rule\_2\_for\_chunk$ sont celles de $count\_number\_of$. La post-condiiton et la post-condition exceptionnelle sont triviales à la vue de la spécification de $count\_number\_of$.
+
 \subsection{}
+\begin{minted}{ocaml}
+predicate identical_chunks (g:takuzu_grid) (s1 s2:int) (incr:int) (l:int)
+= forall k. 0 <= k < l ->
+    acc g s1 incr k = acc g s2 incr k /\ acc g s1 incr k <> Empty
+
+let check_identical_chunks g start1 start2 incr : bool
+  requires { g.length = 64 /\ valid_chunk start1 incr /\ valid_chunk start2 incr }
+  ensures { result = True <-> identical_chunks g start1 start2 incr 8 }
+= try
+    for i=0 to 7 do
+      invariant { identical_chunks g start1 start2 incr i }
+      match acc g start1 incr i, acc g start2 incr i with
+      | Zero,Zero | One,One -> ()
+      | _ -> raise DiffFound
+      end
+    done; ...
+\end{minted}
+
+TODO
+
 \subsection{}
 \subsection{}
 \subsection{}
