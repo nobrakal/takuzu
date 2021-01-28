@@ -6,6 +6,8 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{titlesec}
+\usepackage{hyperref}
+
 \usepackage{minted}
 \author{Alexandre Moine}
 \title{Rapport de projet}
@@ -58,6 +60,7 @@ Les bornes de la boucles sont claires: on s'assure que les indices utiles au tes
 Pour l'invariant, on voit que la fonction lève une exception lorsqu'elle trouve 3 zéros consécutifs entre $i-2$ et $i$. À chaque fin de tour, on a donc qu'il n'y a pas 3 zéros consécutifs entre l'indice $0$ et $i$.
 
 \subsection{}
+\label{q5}
 \begin{minted}{ocaml}
 let rec ghost function num_occ (e:int) (f:int -> int) (i j :int) : int
   variant { j-i }
@@ -70,8 +73,7 @@ On \og parcoure\fg{} la fonction de $j$ à $i$, le variant est donc $i-j$. De pl
 
 \begin{minted}{ocaml}
 let count_number_of (e:int) (a:array int) : int
-  ensures { result = num_occ e (fun i -> a[i]) 0 a.length}
-  = ...
+  ensures { result = num_occ e (fun i -> a[i]) 0 a.length}  = ...
 \end{minted}
 On veut s'assurer que la fonction compte bien le nombre d'éléments égaux à $e$ dans tout $a$.
 
@@ -107,14 +109,66 @@ let check_identical_sub_arrays (a:array int) (o1 o2 l:int) : bool
   ...
 \end{minted}
 
-On commence par se donner un prédicat $valid\_sub\_array a o l$ spécifiant que le sous-tableau $a[o... (o+l-1)]$ est valide. On requiert ensuite que les sous-tableau donné en argument soient valides.\\
+On commence par se donner un prédicat $valid\_sub\_array\ a\ o\ l$ spécifiant que le sous-tableau $a[o... (o+l-1)]$ est valide. On requiert ensuite que les sous-tableau donné en argument soient valides.\\
 L'invariant suit encore une fois directement la spécification. Au rang $i$ de la boucle, on est sûr que les deux sous-tableaux $a[o_1...(o_1+i-1)]$ et $a[o_1...(o_2+i-1)]$ sont égaux.
 
 \section{Takuzu}
 \subsection{}
+
+\begin{minted}{ocaml}
+predicate no_3_consecutive_identical_elem'
+  (g:takuzu_grid) (start incr : int) (l:int) (e:elem) =
+    forall k:int. 0 <= k < l - 2 ->
+     let acc = acc g start incr in
+     not (acc k = acc (k+1) = acc (k+2) = e)
+
+predicate no_3_consecutive_identical_elem (g:takuzu_grid) (start incr:int) (l:int)
+  = no_3_consecutive_identical_elem' g start incr l Zero
+ /\ no_3_consecutive_identical_elem' g start incr l One
+\end{minted}
+On se donne en effet d'abord un prédicat $no\_3\_consecutive\_identical\_elem'$ exprimant qu'il n'y a pas 3 éléments consécutifs égaux ) un paramètre $e$ et on instancie ce paramètre ensuite à $Zero$ et à $One$.
+
 \subsection{}
+TODO verify
+
 \subsection{}
+\begin{minted}{ocaml}
+let rec function num_occ (e:elem) (g:takuzu_grid) (start incr:int) (l:int)
+  requires { g.length = 64 /\ valid_chunk start incr }
+  requires { 0 <= l <= 8 }
+  variant { l }
+= if l=0 then 0 else
+  if eq (acc g start incr (l-1)) e
+  then 1 + num_occ e g start incr (l-1) else num_occ e g start incr (l-1)
+
+let count_number_of (e:elem) (g:takuzu_grid) start incr : int
+  requires { g.length = 64 /\ valid_chunk start incr }
+  ensures { result = num_occ e g start incr 8 }
+  =
+  let ref n = 0 in
+  for i=0 to 7 do
+    invariant { n = num_occ e g start incr i }
+    if eq (acc g start incr i) e then n <- n+1
+  done; n
+\end{minted}
+
+Le code de $num\_occ$ est calqué sur celui de la question \ref{q5}. Ses pré-conditions sont nécessaires à l'accesseur $acc$ et le variant est évident.\\
+Les pré-conditions de $count\_number\_of$ sont nécessaires à l'accesseur $acc$ et l'invariant est trivial.
+
 \subsection{}
+\begin{minted}{ocaml}
+predicate rule_2_for_chunk (g:takuzu_grid) (start incr:int) =
+  num_occ Zero g start incr 8 <= 4 /\ num_occ One g start incr 8 <= 4
+
+let check_rule_2_for_chunk (g:takuzu_grid) start incr : unit
+  requires { g.length = 64 /\ valid_chunk start incr }
+  ensures { rule_2_for_chunk g start incr }
+  raises { Invalid -> not (rule_2_for_chunk g start incr) }
+  =
+  if count_number_of Zero g start incr > 4 || count_number_of One  g start incr > 4
+  then raise Invalid
+\end{minted}
+
 \subsection{}
 \subsection{}
 \subsection{}
