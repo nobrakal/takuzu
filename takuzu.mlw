@@ -588,8 +588,8 @@ let check_cell_change (g:takuzu_grid) (n:int) (e:elem) : unit
   requires { valid_up_to (g[n<-Empty]) n }
   writes { g }
   ensures { valid_up_to g (n+1) }
-  ensures { array_eq g (old g)[n <- e]} (* TODO ADDED *)
-  raises { Invalid -> array_eq g (old g)[n <- e] } (* TODO ADDED *)
+  ensures { array_eq g (old g)[n <- e]}
+  raises { Invalid -> array_eq g (old g)[n <- e] }
 =
   g[n] <- e;
   assert { valid_up_to g[n<-Empty] n };
