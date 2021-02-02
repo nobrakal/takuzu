@@ -399,8 +399,7 @@ predicate identical_chunks (g:takuzu_grid) (s1 s2:int) (incr:int) (l:int)
 (** `identical_chunks g s1 s2 i` is true whenever the chunks `(s1,i)`
     and `(s2,i)`, in their first `l` elements, have no empty cells and
     are pointwise identical *)
-= forall k. 0 <= k < l ->
-    acc g s1 incr k = acc g s2 incr k /\ acc g s1 incr k <> Empty
+= forall k. 0 <= k < l -> acc g s1 incr k = acc g s2 incr k <> Empty
 
 exception DiffFound
 
