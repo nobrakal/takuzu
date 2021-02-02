@@ -383,7 +383,7 @@ let check_rule_2_for_chunk (g:takuzu_grid) start incr : unit
   ensures { rule_2_for_chunk g start incr }
   raises { Invalid -> not (rule_2_for_chunk g start incr) }
   =
-  if count_number_of Zero g start incr > 4 || count_number_of One  g start incr > 4 
+  if count_number_of Zero g start incr > 4 || count_number_of One  g start incr > 4
   then raise Invalid
 
 
