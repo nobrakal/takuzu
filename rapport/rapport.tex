@@ -275,13 +275,20 @@ let rec solve_aux (g:takuzu_grid) (n:int) : unit
 TODO
 
 \subsection{}
-TODO
+\label{q22}
+
 
 \subsection{}
-TODO
+Pour prouver la complétude de $solve$, on pourrait ajouter cette spécification:
+\begin{minted}{coq}
+raises { NoSolution -> not (extends (old g) g /\ valid_up_to g 64) }
+\end{minted}
+C'est à dire que si $solve$ lève une exception, cela veut dire que la grille n'est pas solvable (et par contraposée, si elle est solvable, l'exception $NoSolution$ ne sera pas levée).
 
+TODO
 \section{Conclusion}
 \subsection{}
+\verb|Why3| est une bête un peu difficile à appréhender.
 
 \end{document}
 %%% Local Variables:
