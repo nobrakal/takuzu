@@ -244,22 +244,17 @@ predicate rule_1_for_cell (g:takuzu_grid) (n:int) =
   let cs = column_start_index n in
   let rs = row_start_index n in
   rule_1_for_chunk g rs 1 /\ rule_1_for_chunk g cs 8
-\end{minted}
-La règle 1 est valide pour une cellule $n$ si les règles 1 est valide pour le chunck représentant la colonne de $n$ et la ligne de $n$.
-\begin{minted}{coq}
+
 predicate rule_2_for_cell (g:takuzu_grid) (n:int) =
   let ... in
   rule_2_for_chunk g rs 1 /\ rule_2_for_chunk g cs 8
-\end{minted}
 
-\begin{minted}{coq}
 predicate rule_3_for_cell (g:takuzu_grid) (n:int) =
   let ... in
-  forall i. 0 <= i < 8 ->
-    (i*8 <> rs -> not (identical_rows g rs (i*8)))
-    /\ (i <> cs -> not (identical_columns g cs i))
+  no_identical_rows g rs 8 /\ no_identical_columns g cs 8
 \end{minted}
 
+La règle $i$ est valide pour une cellule $n$ si la règle $i$ est valide pour le chunck représentant la colonne de $n$ et la ligne de $n$.
 
 \subsection{}
 \begin{minted}{coq}

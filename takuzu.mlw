@@ -480,9 +480,7 @@ predicate rule_3_for_cell (g:takuzu_grid) (n:int) =
     satisfied for the row and the column of the cell number `n` *)
   let cs = column_start_index n in
   let rs = row_start_index n in
-  forall i. 0 <= i < 8 ->
-    (i*8 <> rs -> not (identical_rows g rs (i*8)))
-    /\ (i <> cs -> not (identical_columns g cs i))
+  no_identical_rows g rs 8 /\ no_identical_columns g cs 8
 
 predicate valid_for_cell (g:takuzu_grid) (i:int) =
 (** `valid_for_cell g n` is true whenever cell number `n` satisfy the
