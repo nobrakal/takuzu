@@ -264,7 +264,7 @@ let check_at_cell (g:takuzu_grid) (n:int) : unit
   raises { Invalid -> not (valid_for_cell g n) } = ...
 \end{minted}
 
-Avec tout le travail précédent, $check\_at\_cell$ est simple à spécifier: on requiert que la grille et l'argument soient raisonnables, on assure en sortie que la grille si et seulement si l'exception n'a pas été levée.
+Avec tout le travail précédent, $check\_at\_cell\ g\ n$ est simple à spécifier: on requiert que la grille $g$ et l'argument $n$ soient raisonnables, on assure en sortie que la grille est valide pour la cellule $n$ si et seulement si l'exception n'a pas été levée.
 
 \subsection{}
 \begin{minted}{coq}

@@ -440,7 +440,7 @@ let check_rule_3_for_column (g:takuzu_grid) (start:int) : unit
 
 predicate identical_rows (g:takuzu_grid) (s1 s2:int) =
   identical_chunks g s1 s2 1 8
-  
+
 predicate no_identical_rows (g:takuzu_grid) (start i:int) =
   forall k. 0 <= k < i /\ k*8 <> start -> not (identical_rows g start (k*8))
 
