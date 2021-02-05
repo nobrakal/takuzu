@@ -523,10 +523,6 @@ lemma acc_morphism : forall g1 g2 s i k.
   array_eq g1 g2 -> g1.length = 64 ->
   valid_chunk s i -> 0 <= k < 8 -> acc g1 s i k = acc g2 s i k
 
-lemma valid_chunk_row_start_index: forall i.
-  0 <= i < 64 ->
-  valid_chunk (row_start_index i) 1
-
 lemma valid_for_cell_1 : forall g1 g2 i.
   g1.length = 64 -> 0 <= i < 64 ->
   array_eq g1 g2 -> rule_1_for_cell g1 i -> rule_1_for_cell g2 i
@@ -541,9 +537,10 @@ let rec lemma num_occ_morphism (g1 g2:array elem) (e:elem) (start incr l:int)
 lemma valid_for_cell_2 : forall g1 g2 i.
   g1.length = 64 -> 0 <= i < 64 ->
   array_eq g1 g2 -> rule_2_for_cell g1 i -> rule_2_for_cell g2 i
-
-lemma valid_chunk_8 : forall l.
-  0 <= l < 8 -> valid_chunk (l*8) 1
+  
+lemma valid_chunk_rs_index: forall i.
+  0 <= i < 64 ->
+  valid_chunk (row_start_index i) 1
 
 lemma identical_chunks_morphism : forall g1 g2 s1 s2 incr l.
   g1.length = 64 -> array_eq g1 g2 ->
