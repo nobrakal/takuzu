@@ -9,6 +9,9 @@
 \usepackage{hyperref}
 \usepackage{multicol}
 
+\usepackage{tikz}
+\usepackage{tikz-qtree}
+
 \usepackage{minted}
 
 \author{Alexandre Moine}
@@ -289,6 +292,7 @@ let check_cell_change (g:takuzu_grid) (n:int) (e:elem) : unit
 La pré-condition $g.length = 64 /\textbackslash 0 \leq n < 64$ permet de s'assurer que les arguments donnés sont raisonnables.
 
 \subsection{}
+\label{q19}
 On donne un \og lemme de cadre\fg{} un peu particulier:
 \begin{minted}{coq}
 lemma valid_up_to_morphism : forall g1 g2 n.
@@ -299,6 +303,7 @@ lemma valid_up_to_morphism : forall g1 g2 n.
 En effet, TODO
 
 \subsection{}
+\label{q20}
 On donne là encore un \og lemme de cadre\fg{} un peu particulier:
 \begin{minted}{coq}
 lemma valid_up_to_extend : forall g e n.
@@ -323,7 +328,46 @@ TODO
 
 \subsection{}
 \label{q22}
+Les deux lemmes des question \ref{q19} et \ref{q20} sont prouvés via une multitude de petits lemmes résultants du \og dépliage\fg{} des lemmes originaux. On donne leur arbres de dépendances uniquement, par soucis de concision.
+\begin{center}
+  \begin{tikzpicture}[grow'=up]
+    \Tree
+    [.valid\_up\_to\_morphism
+    [.valid\_up\_to\_morphism\_aux
+    [.valid\_for\_cell\_morphism
+    [.valid\_for\_cell\_1
+    [.acc\_morphism
+    ]
+    ]
+    [.valid\_for\_cell\_2
+    [.num\_occ\_morphism
+    ]
+    ]
+    [.valid\_for\_cell\_3
+    [.identical\_chunks\_morphism
+    ]
+    [.valid\_chunk\_rs\_index
+    ]
+    ]
+    ]]]
+  \end{tikzpicture}
+\end{center}
+\bigskip
+\begin{center}
+  \begin{tikzpicture}[grow'=up]
+    \Tree
+    [.valid\_up\_to\_extend
+    [.rule1\_extend
+    ]
+    [.rule2\_extend
+    ]
+    [.rule3\_extend
+    ]
+    ]
+  \end{tikzpicture}
+\end{center}
 
+Tous ces lemmes sont prouvés automatiquement.
 
 \subsection{}
 Pour prouver la complétude de $solve$, on pourrait ajouter cette spécification:
