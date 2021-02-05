@@ -573,7 +573,6 @@ lemma rule_1_extend : forall g:array elem, e:elem, n i:int.
 /\ (rule_2_for_cell g[n <- Empty] i -> rule_2_for_cell g[n <- e] i)
 /\ (rule_3_for_cell g[n <- Empty] i -> rule_3_for_cell g[n <- e] i)
 
-
 lemma valid_up_to_extend : forall g e n.
   valid_up_to g[n <- Empty] n -> valid_for_cell g[n <- e] n ->
   valid_up_to g[n <- e] (n+1)
@@ -591,6 +590,7 @@ let check_cell_change (g:takuzu_grid) (n:int) (e:elem) : unit
   requires { valid_up_to (g[n<-Empty]) n }
   writes { g }
   ensures { valid_up_to g (n+1) }
+  raises { Invalid ->  not (valid_up_to g (n+1)) }
   ensures { array_eq g (old g)[n <- e]}
   raises { Invalid -> array_eq g (old g)[n <- e] }
 =
@@ -640,6 +640,7 @@ let rec solve_aux (g:takuzu_grid) (n:int) : unit
       solve_aux g (n+1)
     with Invalid -> ()
     end;
+    assert {valid_up_to g[n <- Empty] n by (array_eq g[n <- Empty] (old g))};
     try
       check_cell_change g n One;
       solve_aux g (n+1)
