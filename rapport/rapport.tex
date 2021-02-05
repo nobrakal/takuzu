@@ -35,7 +35,7 @@ Mon projet utilise les prouveurs:
 \end{multicols}
 et a été fait avec \verb|Why3| 1.3.3.
 
-\section{Mises en bouche} % TODO: trouver comment rajouter "appetizers"
+\section{Mises en bouche}
 
 \subsection{}
 \begin{minted}{coq}
@@ -328,7 +328,7 @@ TODO
 
 \subsection{}
 \label{q22}
-Les deux lemmes des question \ref{q19} et \ref{q20} sont prouvés via une multitude de petits lemmes résultants du \og dépliage\fg{} des lemmes originaux. On donne leur arbres de dépendances uniquement, par soucis de concision.
+Les deux lemmes des questions \ref{q19} et \ref{q20} sont prouvés via une multitude de petits lemmes résultants du \og dépliage\fg{} des lemmes originaux. On donne leur arbres de dépendances uniquement, par soucis de concision.
 \begin{center}
   \begin{tikzpicture}[grow'=up]
     \Tree
@@ -367,7 +367,9 @@ Les deux lemmes des question \ref{q19} et \ref{q20} sont prouvés via une multit
   \end{tikzpicture}
 \end{center}
 
-Tous ces lemmes sont prouvés automatiquement.
+Tous ces lemmes sont prouvés automatiquement.  Une bonne partie d'entre eux montrent que nos fonctions sont des \emph{morphismes}, au sens que si on a $eq\_array\ g1\ g2$, alors nos fonctions ne disintguent pas $g1$ et $g2$.
+
+On utilise cette notion d'égalité (et non pas l'égalité de \verb|Why3|) ici car elle sera utile pour prouver des sous-but lors de la preuve de $solve$.
 
 \subsection{}
 Pour prouver la complétude de $solve$, on pourrait ajouter cette spécification:
