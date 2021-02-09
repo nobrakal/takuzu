@@ -291,28 +291,37 @@ let check_cell_change (g:takuzu_grid) (n:int) (e:elem) : unit
 
 La pré-condition $g.length = 64 /\textbackslash 0 \leq n < 64$ permet de s'assurer que les arguments donnés sont raisonnables.
 
+\begin{itemize}
+\item L'assertion est difficile à prouver car on change $g$, il faudrait un lemmede cadre adéquat.
+\item La post-condidition n'est pas facile à prouver car à priori il est difficile de savoir en quoi le fait que $check\_at\_cell$ ne soulève pas d'exception entraine que le plateau est valide pour $n+1$.
+\end{itemize}
+
 \subsection{}
 \label{q19}
-On donne un \og lemme de cadre\fg{} un peu particulier:
+On donne comme \og lemme de cadre\fg{}:
 \begin{minted}{coq}
 lemma valid_up_to_morphism : forall g1 g2 n.
   0 <= n < 64 -> g1.length = 64 ->
   array_eq g1 g2 -> valid_up_to g1 n <-> valid_up_to g2 n
 \end{minted}
 
-En effet, TODO
+En effet, on sait que $check\_cell\_change$ ne va faire qu'une modification à son entrée, et l'assertion ignore cette modification.\\
+Nota Bene:
+\begin{enumerate}
+\item On utilise le prédicat $array\_eq$ de la bibliothèque standard pour être uniforme avec les spécifications de $solve\_aux$ plus tard: on peut la remplacer ici par l'égalité de Why3.
+\item On utilise une équivalence et non une simple implication pour prouver automatiquement des sous-buts de la preuve de $solve\_aux$.
+\end{enumerate}
 
 \subsection{}
 \label{q20}
-On donne là encore un \og lemme de cadre\fg{} un peu particulier:
+On donne un \og lemme de cadre\fg{} un peu particulier:
 \begin{minted}{coq}
 lemma valid_up_to_extend : forall g e n.
   valid_up_to g[n <- Empty] n -> valid_for_cell g[n <- e] n ->
   valid_up_to g[n <- e] (n+1)
 \end{minted}
 
-En effet, TODO
-
+En effet, si une grille est valide jusqu'à l'indice $n$, que la case correspondante est vide et que de plus l'indice $n$ est valide pour une valeur $e$, alors toute la grille où on a mis $e$ à l'indice $n$ est valide jusqu'à l'indice $n+1$.
 
 \subsection{}
 \begin{minted}{coq}
