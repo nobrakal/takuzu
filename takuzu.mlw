@@ -559,6 +559,7 @@ lemma valid_up_to_morphism_aux : forall g1 g2 n.
   g1.length = 64 -> 0 <= n < 64 ->
   array_eq g1 g2 -> valid_up_to g1 n -> valid_up_to g2 n
 
+(* Framing lemma for valid_up_to *)
 lemma valid_up_to_morphism : forall g1 g2 n.
   0 <= n < 64 -> g1.length = 64 -> 
   array_eq g1 g2 -> valid_up_to g1 n <-> valid_up_to g2 n
@@ -575,6 +576,7 @@ lemma rule3_extend : forall g:array elem, e:elem, n i:int.
   valid_for_cell g[n <- e] n -> 0 <= i < n + 1 ->
   rule_3_for_cell g[n <- Empty] i -> rule_3_for_cell g[n <- e] i
 
+(* Another framing-like lemma for valid_up_to *)
 lemma valid_up_to_extend : forall g e n.
   valid_up_to g[n <- Empty] n -> valid_for_cell g[n <- e] n ->
   valid_up_to g[n <- e] (n+1)
