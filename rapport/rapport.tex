@@ -1,6 +1,6 @@
 \documentclass[10pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
+%\usepackage[T1]{fontenc}
 \usepackage[french]{babel}
 \usepackage{amsmath}
 \usepackage{amsfonts}
@@ -8,9 +8,13 @@
 \usepackage{titlesec}
 \usepackage{hyperref}
 \usepackage{multicol}
-
 \usepackage{tikz}
 \usepackage{tikz-qtree}
+
+%NB land is wedge
+
+\usepackage{fontspec}
+\setmonofont{DejaVu Sans Mono}[Scale=0.9]
 
 \usepackage{minted}
 
@@ -40,7 +44,7 @@ et a été fait avec \verb|Why3| 1.3.3.
 \subsection{}
 \begin{minted}{coq}
 predicate no_3_consecutive_zeros_sub (a:array int) (l:int) =
-  forall i. 0 <= i < l-2 -> not (a[i] = a[i+1] = a[i+2] = 0)
+  ∀ i. 0 ≤ i < l-2 -> ¬(a[i] = a[i+1] = a[i+2] = 0)
 \end{minted}
 La borne supérieure de la variable $i$ est $l-2$ car en supposant $0 \leq l \leq a.length$, on veut que $0 \leq i+2 < a.length$.
 
@@ -57,37 +61,36 @@ for i = 0 to a.length - 3 do
   invariant { no_3_consecutive_zeros_sub a (i+2) }
   if a[i] = 0 && a[i+1] = 0 && a[i+2] = 0 then raise TripleFound
 \end{minted}
-Les bornes de la boucles sont claires: on s'assure que les indices utiles au test sont valides.\\
-Pour l'invariant, on voit que la fonction lève une exception lorsqu'elle trouve 3 zéros consécutifs entre $i$ et $i+2$. À chaque fin de tour, on a donc qu'il n'y a pas 3 zéros consécutifs entre l'indice $0$ et $i+2$.
+Les bornes de la boucle sont claires: on s'assure que les indices utiles aux tests sont valides. Pour l'invariant, on voit que la fonction lève une exception lorsqu'elle trouve 3 zéros consécutifs entre $i$ et $i+2$. À chaque fin de tour, on a donc qu'il n'y a pas 3 zéros consécutifs entre l'indice $0$ et $i+2$. À la fin, vu les bornes de la boucle, on a bien que $no\_3\_consecutive\_zeros\_sub\ a\ a.length$.
+
 \subsection{}
 \begin{minted}{coq}
 for i = 2 to a.length - 1 do
-  invariant { last1 = a[i-1] /\ last2 = a[i-2] }
+  invariant { last1 = a[i-1] ∧ last2 = a[i-2] }
   invariant { no_3_consecutive_zeros_sub a i }
   let v = a[i] in
   if v = 0 && last1 = 0 && last2 = 0 then raise TripleFound;
   last2 <- last1; last1 <- v;
 \end{minted}
-Les bornes de la boucles sont claires: on s'assure que les indices utiles au test sont valides.\\
-Pour l'invariant, on voit que la fonction lève une exception lorsqu'elle trouve 3 zéros consécutifs entre $i-2$ et $i$. À chaque fin de tour, on a donc qu'il n'y a pas 3 zéros consécutifs entre l'indice $0$ et $i$. Pour prouver cet invariant, on a besoin d'un second invariant spécifiant que les variables \og last\fg{} contiennent bien ce qu'elles sont sensées contenir.
+Les bornes de la boucle sont claires: on s'assure que les indices utiles aux tests sont valides.
+Pour l'invariant, on voit que la fonction lève une exception lorsqu'elle trouve 3 zéros consécutifs entre $i-2$ et $i$. À chaque fin de tour, on a donc qu'il n'y a pas 3 zéros consécutifs entre l'indice $0$ et $i$. Pour prouver cet invariant, on a besoin d'un second invariant spécifiant que les variables \og last\fg{} contiennent bien ce qu'elles sont sensées contenir (les éléments précédents). À la fin, on a bien que $no\_3\_consecutive\_zeros\_sub\ a\ a.length$.
 
 \subsection{}
 \label{q5}
 \begin{minted}{coq}
 let rec ghost function num_occ (e:int) (f:int -> int) (i j :int) : int
   variant { j-i }
-  = if i>=j then 0 else
-    if f (j-1) = e then 1 + num_occ e f i (j-1) else num_occ e f i (j-1)
+= if i>=j then 0 else
+  if f (j-1) = e then 1 + num_occ e f i (j-1) else num_occ e f i (j-1)
 \end{minted}
-On \og parcourt\fg{} la fonction de $j$ à $i$, le variant est donc $i-j$. De plus, sans précondition sur $j$, on donne un test large d'arrêt: $ i >= j$.
+On \og parcourt\fg{} la fonction de $j$ à $i$, le variant est donc $i-j$. De plus, sans précondition sur $j$, on donne un test large d'arrêt: $ i \geq j$.
 
 \subsection{}
-
 \begin{minted}{coq}
 let count_number_of (e:int) (a:array int) : int
   ensures { result = num_occ e (fun i -> a[i]) 0 a.length}  = ...
 \end{minted}
-On veut s'assurer que la fonction compte bien le nombre d'éléments égaux à $e$ dans tout $a$.
+La post-condition permet de s'assurer que la fonction compte bien le nombre d'éléments égaux à $e$ dans tout $a$.
 
 \subsection{}
 \begin{minted}{coq}
@@ -97,12 +100,12 @@ for i=0 to a.length - 1 do
   if a[i] = e then n <- 1+n;
 done; n
 \end{minted}
-L'invariant est trivial ici: la référence $n$ compte bien le nombre d'éléments égaux à $e$ entre $0$ et $i$.
+L'invariant est ici clair: la référence $n$ compte bien le nombre d'éléments égaux à $e$ entre $0$ et $i$. À la fin de la boucle, on obtient la post-condition.
 
 \subsection{}
 \begin{minted}{coq}
 predicate identical_sub_arrays (a:array int) (o1 o2 l:int)
-= forall k:int. 0 <= k < l -> a[o1+k] = a[o2+k]
+= ∀ k:int. 0 ≤ k < l -> a[o1+k] = a[o2+k]
 \end{minted}
 Deux sous-tableaux sont égaux s'ils le sont à chaque indices.
 
@@ -110,13 +113,13 @@ Deux sous-tableaux sont égaux s'ils le sont à chaque indices.
 On commence par se donner un prédicat $valid\_sub\_array\ a\ o\ l$ spécifiant que le sous-tableau $a[o... (o+l-1)]$ est valide.
 \begin{minted}{coq}
 predicate valid_sub_array (a:array int) (o l:int) =
-  0 <= o /\ o + l <= a.length
+  0 ≤ o ∧ o + l ≤ a.length
 \end{minted}
 
 On requiert ensuite que les sous-tableaux donnés en argument soient valides en pré-condition.
 \begin{minted}{coq}
 let check_identical_sub_arrays (a:array int) (o1 o2 l:int) : bool
-  requires { valid_sub_array a o1 l /\ valid_sub_array a o2 l  }
+  requires { valid_sub_array a o1 l ∧ valid_sub_array a o2 l  }
   ensures { result = True <-> identical_sub_arrays a o1 o2 l }
 = try for k=0 to l-1 do
     invariant { identical_sub_arrays a o1 o2 k }
@@ -127,34 +130,37 @@ L'invariant suit encore une fois directement la spécification: au rang $i$ de l
 
 \section{Takuzu}
 \subsection{}
-
+On se donne en effet d'abord un prédicat $no\_3\_consecutive\_identical\_elem'$ exprimant qu'il n'y a pas 3 éléments consécutifs égaux à un paramètre $e$
 \begin{minted}{coq}
 predicate no_3_consecutive_identical_elem'
   (g:takuzu_grid) (start incr : int) (l:int) (e:elem) =
-    forall k:int. 0 <= k < l - 2 ->
-     let acc = acc g start incr in
-     not (acc k = acc (k+1) = acc (k+2) = e)
-
-predicate no_3_consecutive_identical_elem (g:takuzu_grid) (start incr:int) (l:int)
-  = no_3_consecutive_identical_elem' g start incr l Zero
- /\ no_3_consecutive_identical_elem' g start incr l One
+∀ k:int. 0 ≤ k < l - 2 ->
+  let acc = acc g start incr in
+  not (acc k = acc (k+1) = acc (k+2) = e)
 \end{minted}
-On se donne en effet d'abord un prédicat $no\_3\_consecutive\_identical\_elem'$ exprimant qu'il n'y a pas 3 éléments consécutifs égaux à un paramètre $e$ et on instancie ce paramètre ensuite à $Zero$ et à $One$.
+
+On instancie ce paramètre ensuite à $Zero$ et à $One$.
+\begin{minted}{coq}
+predicate no_3_consecutive_identical_elem (g:takuzu_grid) (start incr:int) (l:int)
+=  no_3_consecutive_identical_elem' g start incr l Zero
+∧ no_3_consecutive_identical_elem' g start incr l One
+\end{minted}
+
 
 \subsection{}
 \begin{minted}{coq}
 let check_rule_1_for_chunk (g:takuzu_grid) start incr
-  requires { g.length = 64 /\ valid_chunk start incr }
+  requires { g.length = 64 ∧ valid_chunk start incr }
   ensures { rule_1_for_chunk g start incr }
   raises { Invalid -> not (rule_1_for_chunk g start incr) }
 = let ref count_zeros = 0 in let ref count_ones = 0 in
   for i=0 to 7 do
-    invariant { 0 <= count_zeros < 3 /\ count_zeros <= i}
-    invariant { 0 <= count_ones < 3  /\ count_ones <= i}
-    invariant { i > count_zeros -> acc g start incr (i-count_zeros-1) <> Zero }
-    invariant { i > count_ones -> acc g start incr (i-count_ones-1) <> One }
-    invariant { forall j. j=1 \/ j=2 -> count_zeros >= j -> acc g start incr (i-j) = Zero }
-    invariant { forall j. j=1 \/ j=2 -> count_ones >= j -> acc g start incr (i-j) = One }
+    invariant { 0 ≤ count_zeros < 3 ∧ count_zeros ≤ i}
+    invariant { 0 ≤ count_ones < 3  ∧ count_ones ≤ i }
+    invariant { i > count_zeros -> acc g start incr (i-count_zeros-1) ≠ Zero }
+    invariant { i > count_ones  -> acc g start incr (i-count_ones-1)  ≠ One  }
+    invariant { ∀ j. j=1 ∨ j=2 -> count_zeros ≥ j -> acc g start incr (i-j) = Zero }
+    invariant { ∀ j. j=1 ∨ j=2 -> count_ones  ≥ j -> acc g start incr (i-j) = One  }
     invariant { no_3_consecutive_identical_elem g start incr i }
     ...
 \end{minted}
@@ -162,24 +168,25 @@ Beaucoup d'invariants pour cette boucle; ils restent heureusement intuitifs.
 \begin{itemize}
 \item Les deux premiers donnent des bornes utiles sur les compteurs.
 \item Les deux suivants spécifient que les compteurs sont une sur-approximation d'une zone d'éléments contigus: si $i$ est plus grand que le compteur de zéros, on sait que l'élément à l'indice $i - compteur - 1$ est différent de zéro.
-\item Les deux suivants spécifient que les compteurs sont une sous-approximation d'une zone d'élément contigus: si $j$ est raisonnable et plus petit que le compteur de zéros, on sait que l'élément à l'indice $i - j$ est égal à zéro.
+\item Les deux suivants spécifient que les compteurs sont une sous-approximation d'une zone d'élément contigus: si $j$ est raisonnable et plus petit que le compteur de zéros, on sait que l'élément à l'indice $i - j$ est égal à zéro.\\
+  L'hypothèse peu élégante $j=1 \lor j=2$ est nécessaire pour que les prouveurs arrivent à prouver les deux invariants corrects.
 \item Enfin, on prouve simplement l'invariant que l'on recherche: au rang $i$, il n'y a pas 3 éléments identiques entre le début du chunk et la position $i$.
 \end{itemize}
 
-À noter post-condition exceptionnelle: si une exception est levée c'est que la règle 1 n'est pas valide pour le chunk courant.
+On note la post-condition exceptionnelle: si une exception est levée c'est que la règle 1 n'est pas valide pour le chunk courant.
 
 \subsection{}
 \begin{minted}{coq}
 let rec function num_occ (e:elem) (g:takuzu_grid) (start incr:int) (l:int)
-  requires { g.length = 64 /\ valid_chunk start incr }
-  requires { 0 <= l <= 8 }
+  requires { g.length = 64 ∧ valid_chunk start incr }
+  requires { 0 ≤ l ≤ 8 }
   variant { l }
 = if l=0 then 0 else
   if eq (acc g start incr (l-1)) e
   then 1 + num_occ e g start incr (l-1) else num_occ e g start incr (l-1)
 
 let count_number_of (e:elem) (g:takuzu_grid) start incr : int
-  requires { g.length = 64 /\ valid_chunk start incr }
+  requires { g.length = 64 ∧ valid_chunk start incr }
   ensures { result = num_occ e g start incr 8 }
 = let ref n = 0 in
   for i=0 to 7 do
@@ -194,10 +201,10 @@ Les pré-conditions de $count\_number\_of$ sont nécessaires à l'accesseur $acc
 \subsection{}
 \begin{minted}{coq}
 predicate rule_2_for_chunk (g:takuzu_grid) (start incr:int) =
-  num_occ Zero g start incr 8 <= 4 /\ num_occ One g start incr 8 <= 4
+  num_occ Zero g start incr 8 ≤ 4 ∧ num_occ One g start incr 8 ≤ 4
 
 let check_rule_2_for_chunk (g:takuzu_grid) start incr : unit
-  requires { g.length = 64 /\ valid_chunk start incr }
+  requires { g.length = 64 ∧ valid_chunk start incr }
   ensures { rule_2_for_chunk g start incr }
   raises { Invalid -> not (rule_2_for_chunk g start incr) } =
   if count_number_of Zero g start incr > 4 || count_number_of One  g start incr > 4
@@ -210,10 +217,10 @@ Les préconditions de $check\_rule\_2\_for\_chunk$ sont celles de $count\_number
 \subsection{}
 \begin{minted}{coq}
 predicate identical_chunks (g:takuzu_grid) (s1 s2:int) (incr:int) (l:int)
-= forall k. 0 <= k < l -> acc g s1 incr k = acc g s2 incr k <> Empty
+= ∀ k. 0 ≤ k < l -> acc g s1 incr k = acc g s2 incr k ≠ Empty
 
 let check_identical_chunks g start1 start2 incr : bool
-  requires { g.length = 64 /\ valid_chunk start1 incr /\ valid_chunk start2 incr }
+  requires { g.length = 64 ∧ valid_chunk start1 incr ∧ valid_chunk start2 incr }
   ensures { result = True <-> identical_chunks g start1 start2 incr 8 }
 = try for i=0 to 7 do
     invariant { identical_chunks g start1 start2 incr i }
@@ -234,15 +241,15 @@ predicate identical_columns (g:takuzu_grid) (s1 s2:int) =
   identical_chunks g s1 s2 8 8
 
 predicate no_identical_columns (g:takuzu_grid) (start i:int) =
-  forall k. 0 <= k < i /\ k <> start -> not (identical_columns g start k)
+  ∀ k. 0 ≤ k < i ∧ k ≠ start -> not (identical_columns g start k)
 
 let check_rule_3_for_column (g:takuzu_grid) (start:int) : unit
-  requires { g.length = 64 /\ 0 <= start < 8 }
+  requires { g.length = 64 ∧ 0 ≤ start < 8 }
   ensures { no_identical_columns g start 8 }
   raises { Invalid -> not (no_identical_columns g start 8) }
 = for i=0 to 7 do
   invariant { no_identical_columns g start i }
-    if i <> start && check_identical_chunks g start i 8
+    if i ≠ start && check_identical_chunks g start i 8
     then raise Invalid;
   done
 \end{minted}
@@ -254,15 +261,15 @@ On se donne un prédicat $no\_identical\_columns\ g\ start\ i$ exprimant le fait
 predicate rule_1_for_cell (g:takuzu_grid) (n:int) =
   let cs = column_start_index n in
   let rs = row_start_index n in
-  rule_1_for_chunk g rs 1 /\ rule_1_for_chunk g cs 8
+  rule_1_for_chunk g rs 1 ∧ rule_1_for_chunk g cs 8
 
 predicate rule_2_for_cell (g:takuzu_grid) (n:int) =
   let ... in
-  rule_2_for_chunk g rs 1 /\ rule_2_for_chunk g cs 8
+  rule_2_for_chunk g rs 1 ∧ rule_2_for_chunk g cs 8
 
 predicate rule_3_for_cell (g:takuzu_grid) (n:int) =
   let ... in
-  no_identical_rows g rs 8 /\ no_identical_columns g cs 8
+  no_identical_rows g rs 8 ∧ no_identical_columns g cs 8
 \end{minted}
 
 La règle $i$ est valide pour une cellule $n$ si la règle $i$ est valide pour le chunck représentant la colonne de $n$ et la ligne de $n$.
@@ -270,7 +277,7 @@ La règle $i$ est valide pour une cellule $n$ si la règle $i$ est valide pour l
 \subsection{}
 \begin{minted}{coq}
 let check_at_cell (g:takuzu_grid) (n:int) : unit
-  requires { g.length = 64 /\ 0 <= n < 64 }
+  requires { g.length = 64 ∧ 0 ≤ n < 64 }
   ensures { valid_for_cell g n }
   raises { Invalid -> not (valid_for_cell g n) } = ...
 \end{minted}
@@ -280,7 +287,7 @@ Avec tout le travail précédent, $check\_at\_cell\ g\ n$ est simple à spécifi
 \subsection{}
 \begin{minted}{coq}
 let check_cell_change (g:takuzu_grid) (n:int) (e:elem) : unit
-  requires { g.length = 64 /\ 0 <= n < 64 }
+  requires { g.length = 64 ∧ 0 ≤ n < 64 }
   requires { valid_up_to (g[n<-Empty]) n }
   writes { g }
   ensures { valid_up_to g (n+1) }
@@ -289,7 +296,7 @@ let check_cell_change (g:takuzu_grid) (n:int) (e:elem) : unit
   raises { Invalid -> array_eq g (old g)[n <- e] }
 \end{minted}
 
-La pré-condition $g.length = 64 /\textbackslash 0 \leq n < 64$ permet de s'assurer que les arguments donnés sont raisonnables.
+La pré-condition $g.length = 64 ∧textbackslash 0 \leq n < 64$ permet de s'assurer que les arguments donnés sont raisonnables.
 
 \begin{itemize}
 \item L'assertion est difficile à prouver car on change $g$, il faudrait un lemmede cadre adéquat.
@@ -300,8 +307,8 @@ La pré-condition $g.length = 64 /\textbackslash 0 \leq n < 64$ permet de s'assu
 \label{q19}
 On donne comme \og lemme de cadre\fg{}:
 \begin{minted}{coq}
-lemma valid_up_to_morphism : forall g1 g2 n.
-  0 <= n < 64 -> g1.length = 64 ->
+lemma valid_up_to_morphism : ∀ g1 g2 n.
+  0 ≤ n < 64 -> g1.length = 64 ->
   array_eq g1 g2 -> valid_up_to g1 n <-> valid_up_to g2 n
 \end{minted}
 
@@ -316,7 +323,7 @@ Nota Bene:
 \label{q20}
 On donne un \og lemme de cadre\fg{} un peu particulier:
 \begin{minted}{coq}
-lemma valid_up_to_extend : forall g e n.
+lemma valid_up_to_extend : ∀ g e n.
   valid_up_to g[n <- Empty] n -> valid_for_cell g[n <- e] n ->
   valid_up_to g[n <- e] (n+1)
 \end{minted}
@@ -326,14 +333,23 @@ En effet, si une grille est valide jusqu'à l'indice $n$, que la case correspond
 \subsection{}
 \begin{minted}{coq}
 let rec solve_aux (g:takuzu_grid) (n:int) : unit
-  requires { g.length = 64 /\ 0 <= n <= 64 }
-  requires { full_up_to g n /\ valid_up_to g n }
+  requires { g.length = 64 ∧ 0 ≤ n ≤ 64 }      (* 1 *)
+  requires { full_up_to g n ∧ valid_up_to g n }
   writes { g }
-  variant { 64-n }
-  ensures { array_eq g (old g) }
-  raises { SolutionFound -> extends (old g) g /\ full_up_to g 64 /\ valid_up_to g 64 }
+  variant { 64-n }                                (* 2 *)
+  ensures { array_eq g (old g) }                  (* 3 *)
+  raises { SolutionFound -> extends (old g) g ∧ full_up_to g 64 ∧ valid_up_to g 64 }
 \end{minted}
-TODO
+On a modifié le contrat de l'énoncé en trois points:
+
+\begin{enumerate}
+\item On requiert que les arguments soient sensés.
+\item Le variant est simple: l'appel récursif se fait avec $n+1$ et (sauf quant $n$ a atteint 64)
+\item On a rajouté une post-condition essentielle et non-triviale: si la fonction ne lève pas d'exception, elle \og efface\fg{} les modifications qu'elle a faite sur la grille.
+\end{enumerate}
+On a en effet besoin de savoir ceci quand les appels récursifs sont infructueux. On utilise ici le prédicat $array\_eq$ de la bibliothèque standard car la structure est belle est bien modifiée dans certains cas (et l'égalité interne de \verb|Why3| n'est donc pas valide).
+
+Pour prouver cette post-condition d'égalité, on a du rajouter deux posts-conditions à $check\_cell\_change$ pour indiquer que la fonction ne change jamais son entrée.
 
 \subsection{}
 \label{q22}
@@ -383,14 +399,20 @@ On utilise cette notion d'égalité (et non pas l'égalité de \verb|Why3|) ici 
 \subsection{}
 Pour prouver la complétude de $solve$, on pourrait ajouter cette spécification:
 \begin{minted}{coq}
-raises { NoSolution -> not (extends (old g) g /\ valid_up_to g 64) }
+raises { NoSolution -> not (extends (old g) g ∧ valid_up_to g 64) }
 \end{minted}
 C'est à dire que si $solve$ lève une exception, cela veut dire que la grille n'est pas solvable (et par contraposée, si elle est solvable, l'exception $NoSolution$ ne sera pas levée).
 
 TODO
 \section{Conclusion}
 \subsection{}
-\verb|Why3| est une bête un peu difficile à appréhender. Pour un utilisateur Coq, le fait de devoir déléguer des preuves non-triviales est assez perturbant, surtout qu'un échec est souvent dû à un manque de lemme intermédiaire peu évident.
+\verb|Why3| est une bête un peu difficile à appréhender. Pour un utilisateur Coq, le fait de devoir déléguer des preuves non-triviales est assez perturbant, surtout qu'un échec est souvent dû à un manque de lemme intermédiaire peu évident. Mon mode de développement pour les lemmes des dernières questions a souvent été de:
+\begin{enumerate}
+\item Trouver un lemme non prouvé.
+\item Ouvrir \verb|Coq| et comprendre les hypothèses nécessaires à la preuve.
+\item Écrire ces hypothèses dans \verb|Why3| et recommencer.
+\end{enumerate}
+Cela se ressent sans doute dans mes énoncés.
 
 Mise à part ces légers soucis, ce fut un projet intéressant !
 \end{document}
