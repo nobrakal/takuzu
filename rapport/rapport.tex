@@ -77,9 +77,9 @@ Pour l'invariant, on voit que la fonction lève une exception lorsqu'elle trouve
 \subsection{}
 \begin{minted}{coq}
 for i=0 to a.length - 1 do
-  invariant { 0 <= count_zeros < 3 /\ count_zeros <= i}
-  invariant { i > count_zeros -> a [i-count_zeros-1] <> 0 }
-  invariant { forall j. 0 < j <= count_zeros -> a[i-j] = 0 }
+  invariant { 0 ≤ count_zeros < 3 ∧ count_zeros ≤ i}
+  invariant { i > count_zeros -> a [i-count_zeros-1] ≠ 0 }
+  invariant { forall j. 0 < j ≤ count_zeros -> a[i-j] = 0 }
   invariant { no_3_consecutive_zeros_sub a i }
     if a[i] = 0 then
       if count_zeros = 2 then raise TripleFound
