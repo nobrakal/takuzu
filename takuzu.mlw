@@ -58,7 +58,7 @@ let no_3_consecutive_zeros_version_1 (a : array int) : bool
   try
     for i = 0 to a.length - 3 do
       invariant { no_3_consecutive_zeros_sub a (i+2) }
-      if a[i] = 0 && a[i+1] = 0 && a[i+2] = 0 then raise TripleFound;
+      if a[i] = a[i+1] = a[i+2] = 0 then raise TripleFound;
     done;
     True
   with TripleFound -> False
