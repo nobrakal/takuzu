@@ -48,7 +48,6 @@ predicate no_3_consecutive_zeros_sub (a:array int) (l:int) =
 \end{minted}
 La borne supérieure de la variable $i$ est $l-2$ car en supposant $0 \leq l \leq a.length$, on veut que $0 \leq i+2 < a.length$.
 
-\subsection{}
 \begin{minted}{coq}
 predicate no_3_consecutive_zeros (a:array int) =
   no_3_consecutive_zeros_sub a a.length
@@ -74,6 +73,22 @@ for i = 2 to a.length - 1 do
 \end{minted}
 Les bornes de la boucle sont claires: on s'assure que les indices utiles aux tests sont valides.
 Pour l'invariant, on voit que la fonction lève une exception lorsqu'elle trouve 3 zéros consécutifs entre $i-2$ et $i$. À chaque fin de tour, on a donc qu'il n'y a pas 3 zéros consécutifs entre l'indice $0$ et $i$. Pour prouver cet invariant, on a besoin d'un second invariant spécifiant que les variables \og last\fg{} contiennent bien ce qu'elles sont sensées contenir (les éléments précédents). À la fin, on a bien que $no\_3\_consecutive\_zeros\_sub\ a\ a.length$.
+
+\subsection{}
+\begin{minted}{coq}
+for i=0 to a.length - 1 do
+  invariant { 0 <= count_zeros < 3 /\ count_zeros <= i}
+  invariant { i > count_zeros -> a [i-count_zeros-1] <> 0 }
+  invariant { forall j. 0 < j <= count_zeros -> a[i-j] = 0 }
+  invariant { no_3_consecutive_zeros_sub a i }
+    if a[i] = 0 then
+      if count_zeros = 2 then raise TripleFound
+      else count_zeros <- count_zeros + 1
+    else count_zeros <- 0
+done;
+\end{minted}
+
+TODO
 
 \subsection{}
 \label{q5}
