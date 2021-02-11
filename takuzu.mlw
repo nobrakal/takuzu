@@ -83,7 +83,7 @@ let no_3_consecutive_zeros_version_2 (a : array int) : bool
       invariant { last1 = a[i-1] /\ last2 = a[i-2] }
       invariant { no_3_consecutive_zeros_sub a i }
       let v = a[i] in
-      if v = 0 && last1 = 0 && last2 = 0 then raise TripleFound;
+      if v = last1 = last2 = 0 then raise TripleFound;
       last2 <- last1;
       last1 <- v;
     done;
