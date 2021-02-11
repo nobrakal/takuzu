@@ -154,19 +154,16 @@ L'invariant suit encore une fois directement la spécification: au rang $i$ de l
 \subsection{}
 On se donne en effet d'abord un prédicat $no\_3\_consecutive\_identical\_elem'$ exprimant qu'il n'y a pas 3 éléments consécutifs égaux à un paramètre $e$
 \begin{minted}{text}
-predicate no_3_consecutive_identical_elem'
-  (g:takuzu_grid) (start incr:int) (l:int) (e:elem) =
-∀ k:int. 0 ≤ k < l - 2 ->
-  let acc = acc g start incr in ¬ (acc k = acc (k+1) = acc (k+2) = e)
+predicate no_3_consecutive_identical_elem' (acc:int -> elem) (l:int) (e:elem)
+= ∀ k:int. 0 ≤ k < l - 2 -> ¬(acc k = acc (k+1) = acc (k+2) = e)
 \end{minted}
 
 On instancie ce paramètre ensuite à $Zero$ et à $One$.
 \begin{minted}{text}
 predicate no_3_consecutive_identical_elem (g:takuzu_grid) (start incr l:int)
-=  no_3_consecutive_identical_elem' g start incr l Zero
- ∧ no_3_consecutive_identical_elem' g start incr l One
+=  no_3_consecutive_identical_elem' (acc:g start incr) l Zero
+ ∧ no_3_consecutive_identical_elem' (acc:g start incr) l One
 \end{minted}
-
 
 \subsection{}
 \begin{minted}{text}
