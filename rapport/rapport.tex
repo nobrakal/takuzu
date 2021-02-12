@@ -428,11 +428,11 @@ On utilise cette notion d'égalité (et non pas l'égalité de \verb|Why3|) ici 
 \subsection{}
 Pour prouver la complétude de $solve$, on pourrait ajouter cette spécification:
 \begin{minted}{text}
-raises { NoSolution -> ¬ (extends (old g) g ∧ valid_up_to g 64) }
+raises { NoSolution -> ¬(∃ g'. extends (old g) g' ∧ valid_up_to g' 64) }
 \end{minted}
 C'est à dire que si $solve$ lève une exception, cela veut dire que la grille n'est pas solvable (et par contraposée, si elle est solvable, l'exception $NoSolution$ ne sera pas levée).
 
-TODO
+Une telle propriété est non triviale: il faudrait montrer que $solve\_aux$ explore bien toutes les possibilités.
 \section{Conclusion}
 \subsection{}
 \verb|Why3| est une bête un peu difficile à appréhender. Pour un utilisateur de \verb|Coq|, le fait de devoir déléguer des preuves non-triviales est assez perturbant, surtout qu'un échec est souvent dû à un manque de lemme intermédiaire peu évident. Mon mode de développement pour les lemmes des dernières questions a souvent été de:
