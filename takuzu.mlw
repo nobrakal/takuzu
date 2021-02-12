@@ -56,7 +56,7 @@ let no_3_consecutive_zeros_version_1 (a : array int) : bool
   ensures { result = True <-> no_3_consecutive_zeros a }
   =
   try
-    for i = 0 to a.length - 3 do
+    for i=0 to a.length-3 do
       invariant { no_3_consecutive_zeros_sub a (i+2) }
       if a[i] = a[i+1] = a[i+2] = 0 then raise TripleFound;
     done;
@@ -79,7 +79,7 @@ let no_3_consecutive_zeros_version_2 (a : array int) : bool
   let ref last2 = a[0] in
   let ref last1 = a[1] in
   try
-    for i = 2 to a.length - 1 do
+    for i=2 to a.length-1 do
       invariant { last1 = a[i-1] /\ last2 = a[i-2] }
       invariant { no_3_consecutive_zeros_sub a i }
       let v = a[i] in
@@ -99,13 +99,12 @@ implementation 3
 
 *)
 
-
 let no_3_consecutive_zeros_version_3 (a : array int) : bool
   ensures { result = True <-> no_3_consecutive_zeros a }
   =
   let ref count_zeros = 0 in
   try
-    for i=0 to a.length - 1 do
+    for i=0 to a.length-1 do
     invariant { 0 <= count_zeros < 3 /\ count_zeros <= i}
     invariant { i > count_zeros -> a [i-count_zeros-1] <> 0 }
     invariant { forall j. 0 < j <= count_zeros -> a[i-j] = 0 }
@@ -315,7 +314,7 @@ let check_rule_1_for_chunk (g:takuzu_grid) start incr
 =
   let ref count_zeros = 0 in
   let ref count_ones = 0 in
-  for i = 0 to 7 do
+  for i=0 to 7 do
     invariant { 0 <= count_zeros < 3 /\ count_zeros <= i}
     invariant { 0 <= count_ones < 3  /\ count_ones <= i}
     invariant { i > count_zeros -> acc g start incr (i-count_zeros-1) <> Zero }
