@@ -290,7 +290,7 @@ exception Invalid
 *)
 
 predicate no_3_consecutive_identical_elem' (acc:int -> elem) (l:int) (e:elem) =
-   forall k:int. 0 <= k < l - 2 -> not (acc k = acc (k+1) = acc (k+2) = e)
+   forall k. 0 <= k < l-2 -> not (acc k = acc (k+1) = acc (k+2) = e)
 
 predicate no_3_consecutive_identical_elem (g:takuzu_grid) (start incr : int) (l:int) =
   (** `no_3_consecutive_identical_elem g s i l` is true whenever in the
