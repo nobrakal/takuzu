@@ -198,7 +198,7 @@ predicate identical_sub_arrays (a:array int) (o1 o2 l:int)
 exception DiffFound
 
 predicate valid_sub_array (a:array int) (o l:int) =
-  0 <= o /\ o + l <= a.length
+  0 <= o <= a.length - l
 
 let check_identical_sub_arrays (a:array int) (o1 o2 l:int) : bool
   requires { valid_sub_array a o1 l /\ valid_sub_array a o2 l  }

@@ -78,7 +78,7 @@ Pour l'invariant, on voit que la fonction lève une exception lorsqu'elle trouve
 \subsection{}
 \label{q4}
 \begin{minted}{text}
-for i=0 to a.length - 1 do
+for i = 0 to a.length - 1 do
   invariant { 0 ≤ count_zeros < 3 ∧ count_zeros ≤ i}
   invariant { i > count_zeros -> a[i-count_zeros-1] ≠ 0 }
   invariant { forall j. 0 < j ≤ count_zeros -> a[i-j] = 0 }
@@ -102,7 +102,7 @@ Les invariants deviennent un peu plus compliqués:
 \begin{minted}{text}
 let rec ghost function num_occ (e:int) (f:int -> int) (i j :int) : int
   variant { j-i }
-= if i>=j then 0 else
+= if i >= j then 0 else
   if f (j-1) = e then 1 + num_occ e f i (j-1) else num_occ e f i (j-1)
 \end{minted}
 On \og parcourt\fg{} la fonction de $j$ à $i$, le variant est donc $i-j$. De plus, sans précondition sur $j$, on donne un test large d'arrêt: $ i \geq j$.
@@ -117,7 +117,7 @@ La post-condition permet de s'assurer que la fonction compte bien le nombre d'é
 \subsection{}
 \begin{minted}{text}
 let ref n = 0 in
-for i=0 to a.length - 1 do
+for i = 0 to a.length - 1 do
   invariant { n = num_occ e (fun i -> a[i]) 0 i }
   if a[i] = e then n <- 1+n;
 done; n
@@ -134,8 +134,8 @@ Deux sous-tableaux sont égaux s'ils le sont à chaque indices.
 \subsection{}
 On commence par se donner un prédicat $valid\_sub\_array\ a\ o\ l$ spécifiant que le sous-tableau $a[o... (o+l-1)]$ est valide.
 \begin{minted}{text}
-predicate valid_sub_array (a:array int) (o l:int) =
-  0 ≤ o ∧ o + l ≤ a.length
+predicate valid_sub_array (a:array int) (o l:int)
+= 0 ≤ o ≤ a.length - l
 \end{minted}
 
 On requiert ensuite que les sous-tableaux donnés en argument soient valides en pré-condition.
