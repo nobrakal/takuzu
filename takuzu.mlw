@@ -91,7 +91,6 @@ let no_3_consecutive_zeros_version_2 (a : array int) : bool
   with TripleFound -> False
   end
 
-
 (**
 
 {4 QUESTION 4}
@@ -297,7 +296,7 @@ predicate no_3_consecutive_identical_elem (g:takuzu_grid) (start incr : int) (l:
     chunk `(s,i)` of grid `g`, the first `l` elements do not violate
     the first Takuzu rule *)
    no_3_consecutive_identical_elem' (acc g start incr) l Zero 
-/\ no_3_consecutive_identical_elem' (acc g start incr)  l One
+/\ no_3_consecutive_identical_elem' (acc g start incr) l One
 
 predicate rule_1_for_chunk (g:takuzu_grid) (start incr:int) =
   (** `rule_1_for_chunk g s i` is true when rule 1 is not violated in chunk
@@ -316,7 +315,7 @@ let check_rule_1_for_chunk (g:takuzu_grid) start incr
 =
   let ref count_zeros = 0 in
   let ref count_ones = 0 in
-  for i=0 to 7 do
+  for i = 0 to 7 do
     invariant { 0 <= count_zeros < 3 /\ count_zeros <= i}
     invariant { 0 <= count_ones < 3  /\ count_ones <= i}
     invariant { i > count_zeros -> acc g start incr (i-count_zeros-1) <> Zero }
@@ -352,7 +351,7 @@ let rec function num_occ (e:elem) (g:takuzu_grid) (start incr:int) (l:int)
   requires { valid_chunk start incr }
   requires { 0 <= l <= 8 }
   variant { l }
-= if l=0 then 0 else
+= if l = 0 then 0 else
   if eq (acc g start incr (l-1)) e
   then 1 + num_occ e g start incr (l-1) else num_occ e g start incr (l-1)
 
@@ -364,7 +363,7 @@ let count_number_of (e:elem) (g:takuzu_grid) start incr : int
   ensures { result = num_occ e g start incr 8 }
   =
   let ref n = 0 in
-  for i=0 to 7 do
+  for i = 0 to 7 do
     invariant { n = num_occ e g start incr i }
     if eq (acc g start incr i) e then n <- n+1
   done;
