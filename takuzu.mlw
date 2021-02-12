@@ -295,7 +295,7 @@ predicate no_3_consecutive_identical_elem (g:takuzu_grid) (start incr : int) (l:
   (** `no_3_consecutive_identical_elem g s i l` is true whenever in the
     chunk `(s,i)` of grid `g`, the first `l` elements do not violate
     the first Takuzu rule *)
-   no_3_consecutive_identical_elem' (acc g start incr) l Zero 
+   no_3_consecutive_identical_elem' (acc g start incr) l Zero
 /\ no_3_consecutive_identical_elem' (acc g start incr) l One
 
 predicate rule_1_for_chunk (g:takuzu_grid) (start incr:int) =
@@ -536,7 +536,7 @@ let rec lemma num_occ_morphism (g1 g2:array elem) (e:elem) (start incr l:int)
 lemma valid_for_cell_2 : forall g1 g2 i.
   g1.length = 64 -> 0 <= i < 64 ->
   array_eq g1 g2 -> rule_2_for_cell g1 i -> rule_2_for_cell g2 i
-  
+
 lemma valid_chunk_rs_index: forall i.
   0 <= i < 64 ->
   valid_chunk (row_start_index i) 1
@@ -560,7 +560,7 @@ lemma valid_up_to_morphism_aux : forall g1 g2 n.
 
 (* Framing lemma for valid_up_to *)
 lemma valid_up_to_morphism : forall g1 g2 n.
-  0 <= n < 64 -> g1.length = 64 -> 
+  0 <= n < 64 -> g1.length = 64 ->
   array_eq g1 g2 -> valid_up_to g1 n <-> valid_up_to g2 n
 
 lemma rule1_extend : forall g:array elem, e:elem, n i:int.
