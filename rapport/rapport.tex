@@ -301,6 +301,7 @@ let check_at_cell (g:takuzu_grid) (n:int) : unit
 Avec tout le travail précédent, $check\_at\_cell\ g\ n$ est simple à spécifier: on requiert que la grille $g$ et l'argument $n$ soient raisonnables et on assure en sortie que la grille est valide pour la cellule $n$ si et seulement si l'exception n'a pas été levée.
 
 \subsection{}
+\label{q18}
 \begin{minted}{text}
 let check_cell_change (g:takuzu_grid) (n:int) (e:elem) : unit
   requires { g.length = 64 ∧ 0 ≤ n < 64 }
@@ -367,7 +368,7 @@ On a modifié le contrat de l'énoncer en trois points:
 \end{enumerate}
 On a en effet besoin de savoir ceci quand les appels récursifs sont infructueux. On utilise ici le prédicat $array\_eq$ de la bibliothèque standard car la structure est bel et bien modifiée dans certains cas (et l'égalité interne de \verb|Why3| n'est donc pas valide).
 
-Pour prouver cette post-condition d'égalité, on a dû rajouter deux post-conditions à $check\_cell\_change$ pour indiquer que même si la fonction modifie son entrée, ces modifications ne sont pas visibles.
+Pour prouver cette post-condition d'égalité, on a dû rajouter deux post-conditions à $check\_cell\_change$ (voir question \ref{q18}) pour indiquer que même si la fonction modifie son entrée, ces modifications ne sont pas visibles.
 
 Enfin, on a rajouté une assertion dans le code de $solve\_aux$:
 
@@ -439,6 +440,7 @@ raises { NoSolution -> ¬(∃ g'. extends (old g) g' ∧ valid_up_to g' 64) }
 C'est à dire que si $solve$ lève une exception, cela veut dire que la grille n'est pas solvable (et par contraposée, si elle est solvable, l'exception $NoSolution$ ne sera pas levée).
 
 Une telle propriété est non triviale: il faudrait montrer que $solve\_aux$ explore bien toutes les possibilités.
+
 \section{Conclusion}
 \subsection{}
 \verb|Why3| est une bête un peu difficile à appréhender. Pour un utilisateur de \verb|Coq|, le fait de devoir déléguer des preuves non-triviales est assez perturbant, surtout qu'un échec est souvent dû à un manque de lemme intermédiaire peu évident. Mon mode de développement pour les lemmes des dernières questions a souvent été de:
