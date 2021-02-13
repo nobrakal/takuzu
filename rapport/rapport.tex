@@ -1,4 +1,4 @@
-\documentclass[10pt,a4paper]{article}
+﻿\documentclass[10pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
 %\usepackage[T1]{fontenc}
 \usepackage[french]{babel}
@@ -11,6 +11,9 @@
 \usepackage{tikz}
 \usepackage{tikz-qtree}
 
+\usepackage{chngcntr}
+\counterwithout{subsection}{section}
+
 %NB land is wedge
 
 \usepackage{fontspec}
@@ -22,10 +25,8 @@
 \author{Alexandre Moine}
 \title{Rapport de projet pour le cours\\ 2.36.1 Preuve de programmes}
 
-\newcounter{question}
-
 \titleformat{\subsection}
-{\normalfont\normalsize\bfseries}{Question \stepcounter{question}\thequestion}{1em}{}
+{\normalfont\normalsize\bfseries}{Question \thesubsection}{1em}{}
 
 \begin{document}
 \maketitle
@@ -44,16 +45,16 @@ et a été fait avec \verb|Why3| version 1.3.3.
 
 \subsection{}
 \begin{minted}{text}
-predicate no_3_consecutive_zeros_sub (a:array int) (l:int) =
-  ∀ i. 0 ≤ i < l-2 -> ¬(a[i] = a[i+1] = a[i+2] = 0)
+predicate no_3_consecutive_zeros_sub (a:array int) (l:int)
+= ∀ i. 0 ≤ i < l-2 -> ¬(a[i] = a[i+1] = a[i+2] = 0)
 \end{minted}
 La borne supérieure de la variable $i$ est $l-2$ car en supposant $0 \leq l \leq a.length$, on veut que $0 \leq i+2 < a.length$.
 
 \begin{minted}{text}
-predicate no_3_consecutive_zeros (a:array int) =
-  no_3_consecutive_zeros_sub a a.length
+predicate no_3_consecutive_zeros (a:array int)
+= no_3_consecutive_zeros_sub a a.length
 \end{minted}
-En effet, il n'y a pas 3 zéros consécutifs dans $a$ si et seulement s'il n'a pas 3 zéros consécutifs entre les indices $0$ et la taille de $a$.
+En effet, il n'y a pas 3 zéros consécutifs dans $a$ si et seulement s'il n'y a pas 3 zéros consécutifs entre les indices $0$ et la taille de $a$.
 
 \subsection{}
 \begin{minted}{text}
@@ -72,7 +73,7 @@ for i = 2 to a.length-1 do
   if v = last1 = last2 = 0 then raise TripleFound;
   last2 <- last1; last1 <- v;
 \end{minted}
-Les bornes de la boucle sont claires: on s'assure que les indices utiles aux tests sont valides.
+Les bornes de la boucle sont claires: les deux premiers éléments sont dans les variables $last$ et on veut parcourir tout le tableau.
 Pour l'invariant, on voit que la fonction lève une exception lorsqu'elle trouve 3 zéros consécutifs entre $i-2$ et $i$. À chaque fin de tour, on a donc qu'il n'y a pas 3 zéros consécutifs entre l'indice $0$ et $i$. Pour prouver cet invariant, on a besoin d'un second invariant spécifiant que les variables \og last\fg{} contiennent bien ce qu'elles sont sensées contenir (les éléments précédents). À la fin, on a bien que $no\_3\_consecutive\_zeros\_sub\ a\ a.length$.
 
 \subsection{}
@@ -91,8 +92,8 @@ done;
 \end{minted}
 Les invariants deviennent un peu plus compliqués:
 \begin{itemize}
-\item Le premier permet de borner $count\_zeros$
-\item Le second assure que $count\_zeros$ est une sur-approximation de zéros contigus: au delà de la zone délimitée par $count\_zeros$, on a une valeur non-nulle.
+\item Le premier permet de borner $count\_zeros$.
+\item Le second assure que $count\_zeros$ est une sur-approximation de zéros contigus: au-delà de la zone délimitée par $count\_zeros$, on a une valeur non-nulle.
 \item Le troisième assure que $count\_zeros$ est une sous-approximation de zéros contigus: dans la zone délimitée par $count\_zeros$, on n'a que des valeurs nulles.
 \item Enfin, on a l'invariant principal: si aucune exception n'a été levée au rang $i$ c'est que l'on n'a pas rencontré 3 zéros consécutifs.
 \end{itemize}
@@ -100,7 +101,7 @@ Les invariants deviennent un peu plus compliqués:
 \subsection{}
 \label{q5}
 \begin{minted}{text}
-let rec ghost function num_occ (e:int) (f:int -> int) (i j :int) : int
+let rec ghost function num_occ (e:int) (f:int -> int) (i j:int) : int
   variant { j-i }
 = if i >= j then 0 else
   if f (j-1) = e then 1 + num_occ e f i (j-1) else num_occ e f i (j-1)
@@ -129,7 +130,7 @@ L'invariant est ici clair: la référence $n$ compte bien le nombre d'éléments
 predicate identical_sub_arrays (a:array int) (o1 o2 l:int)
 = ∀ k. 0 ≤ k < l -> a[o1+k] = a[o2+k]
 \end{minted}
-Deux sous-tableaux sont égaux s'ils le sont à chaque indices.
+Deux sous-tableaux sont égaux s'ils le sont à chaque indice.
 
 \subsection{}
 On commence par se donner un prédicat $valid\_sub\_array\ a\ o\ l$ spécifiant que le sous-tableau $a[o... (o+l-1)]$ est valide.
@@ -154,13 +155,15 @@ L'invariant suit encore une fois directement la spécification: au rang $i$ de l
 \subsection{}
 On se donne d'abord un prédicat $no\_3\_consecutive\_identical\_elem'$ exprimant qu'il n'y a pas 3 éléments consécutifs égaux à un paramètre $e$:
 \begin{minted}{text}
-predicate no_3_consecutive_identical_elem' (acc:int -> elem) (l:int) (e:elem)
+predicate no_3_consecutive_identical_elem'
+  (acc:int -> elem) (l:int) (e:elem)
 = ∀ k. 0 ≤ k < l-2 -> ¬(acc k = acc (k+1) = acc (k+2) = e)
 \end{minted}
 
 On instancie ce paramètre ensuite à $Zero$ et à $One$:
 \begin{minted}{text}
-predicate no_3_consecutive_identical_elem (g:takuzu_grid) (start incr l:int)
+predicate no_3_consecutive_identical_elem
+  (g:takuzu_grid) (start incr l:int)
 = no_3_consecutive_identical_elem' (acc:g start incr) l Zero
 ∧ no_3_consecutive_identical_elem' (acc:g start incr) l One
 \end{minted}
@@ -170,19 +173,21 @@ predicate no_3_consecutive_identical_elem (g:takuzu_grid) (start incr l:int)
 let check_rule_1_for_chunk (g:takuzu_grid) start incr
   requires { g.length = 64 ∧ valid_chunk start incr }
   ensures { rule_1_for_chunk g start incr }
-  raises { Invalid -> ¬ (rule_1_for_chunk g start incr) }
+  raises { Invalid -> ¬(rule_1_for_chunk g start incr) }
 = let ref count_zeros = 0 in let ref count_ones = 0 in
   for i = 0 to 7 do
     invariant { 0 ≤ count_zeros < 3 ∧ count_zeros ≤ i}
     invariant { 0 ≤ count_ones < 3  ∧ count_ones ≤ i }
     invariant { i > count_zeros -> acc g start incr (i-count_zeros-1) ≠ Zero }
     invariant { i > count_ones  -> acc g start incr (i-count_ones-1)  ≠ One  }
-    invariant { ∀ j. j=1 ∨ j=2 -> count_zeros ≥ j -> acc g start incr (i-j) = Zero }
-    invariant { ∀ j. j=1 ∨ j=2 -> count_ones  ≥ j -> acc g start incr (i-j) = One  }
+    invariant { ∀ j. j=1 ∨ j=2 -> count_zeros ≥ j ->
+                     acc g start incr (i-j) = Zero }
+    invariant { ∀ j. j=1 ∨ j=2 -> count_ones  ≥ j ->
+                     acc g start incr (i-j) = One  }
     invariant { no_3_consecutive_identical_elem g start incr i }
     ...
 \end{minted}
-Beaucoup d'invariants pour cette boucle; ils restent heureusement intuitifs (ils s'inspirent beaucoup de la question \ref{q4}).
+Beaucoup d'invariants pour cette boucle (ils s'inspirent beaucoup de la question \ref{q4}):
 \begin{itemize}
 \item Les deux premiers donnent des bornes utiles sur les compteurs.
 \item Les deux suivants spécifient que les compteurs sont une sur-approximation d'une zone d'éléments contigus: si $i$ est plus grand que le compteur de zéros, on sait que l'élément à l'indice $i - compteur-1$ est différent de zéro.
@@ -224,7 +229,7 @@ predicate rule_2_for_chunk (g:takuzu_grid) (start incr:int) =
 let check_rule_2_for_chunk (g:takuzu_grid) start incr : unit
   requires { g.length = 64 ∧ valid_chunk start incr }
   ensures { rule_2_for_chunk g start incr }
-  raises { Invalid -> ¬ (rule_2_for_chunk g start incr) } =
+  raises { Invalid -> ¬(rule_2_for_chunk g start incr) } =
   if count_number_of Zero g start incr > 4 || count_number_of One  g start incr > 4
   then raise Invalid
 \end{minted}
@@ -248,11 +253,11 @@ let check_identical_chunks g start1 start2 incr : bool
     | _ -> raise DiffFound
     end done; ...
 \end{minted}
-La définition du prédicat $identical\_chunks$ est claire: deux chunks sont identiques si et seulement si ils sont égaux sur chaque indices et différent de $Empty$.
+La définition du prédicat $identical\_chunks$ est claire: deux chunks sont identiques si et seulement s’ils sont égaux sur chaque indice et différent de $Empty$.
 La vérification se fait via une boucle dont l'invariant est justement que les chuncks sont identiques.
 
 \subsection{}
-On donne l'explication uniquement pour les colonnes, le prédicat pour les ligne est équivalent.
+On donne l'explication uniquement pour les colonnes, le prédicat pour les lignes est équivalent.
 
 \begin{minted}{text}
 predicate identical_columns (g:takuzu_grid) (s1 s2:int)
@@ -264,7 +269,7 @@ predicate no_identical_columns (g:takuzu_grid) (start i:int)
 let check_rule_3_for_column (g:takuzu_grid) (start:int) : unit
   requires { g.length = 64 ∧ 0 ≤ start < 8 }
   ensures { no_identical_columns g start 8 }
-  raises { Invalid -> ¬ (no_identical_columns g start 8) }
+  raises { Invalid -> ¬(no_identical_columns g start 8) }
 = for i=0 to 7 do
   invariant { no_identical_columns g start i }
     if i ≠ start && check_identical_chunks g start i 8
@@ -272,7 +277,7 @@ let check_rule_3_for_column (g:takuzu_grid) (start:int) : unit
   done
 \end{minted}
 
-On se donne un prédicat $no\_identical\_columns\ g\ start\ i$ exprimant le fait qu'il n'y a pas de colonnes identiques dans la grille $g$ entre les indices $0$ et $i$. $check\_rule\_3\_for\_column$ ensuite s'assure que ce prédicat est vrai jusqu'à la huitième colonnes. Si une exception est levée, c'est que le prédicat est faux. Enfin, l'invariant de la boucle est calqué sur ce que l'on veut montrer.
+On se donne un prédicat $no\_identical\_columns\ g\ start\ i$ exprimant le fait qu'il n'y a pas de colonnes identiques dans la grille $g$ entre les indices $0$ et $i$. $check\_rule\_3\_for\_column$ ensuite s'assure que ce prédicat est vrai jusqu'à la huitième colonne. Si une exception est levée, c'est que le prédicat est faux. Enfin, l'invariant de la boucle est calqué sur ce que l'on veut montrer.
 
 \subsection{}
 On ne donne le prédicat que pour la première règle, les autres sont similaires.
@@ -302,7 +307,8 @@ let check_cell_change (g:takuzu_grid) (n:int) (e:elem) : unit
   requires { valid_up_to (g[n<-Empty]) n }
   writes { g }
   ensures { valid_up_to g (n+1) }
-  raises { Invalid ->  ¬ (valid_up_to g (n+1)) }
+  raises { Invalid ->  ¬(valid_up_to g (n+1)) }
+  (* Ajouté pour la preuve de solve_aux *)
   ensures { array_eq g (old g)[n <- e]}
   raises { Invalid -> array_eq g (old g)[n <- e] }
 \end{minted}
@@ -350,18 +356,18 @@ let rec solve_aux (g:takuzu_grid) (n:int) : unit
   variant { 64-n }                             (* 2 *)
   ensures { array_eq g (old g) }               (* 3 *)
   raises { SolutionFound ->
-             extends (old g) g ∧ full_up_to g 64 ∧ valid_up_to g 64 }
+           extends (old g) g ∧ full_up_to g 64 ∧ valid_up_to g 64 }
 \end{minted}
 On a modifié le contrat de l'énoncer en trois points:
 
 \begin{enumerate}
 \item On requiert que les arguments soient sensés.
-\item Le variant est simple: l'appel récursif se fait avec $n+1$ et (sauf quant $n$ a atteint $64$).
+\item Le variant est simple: l'appel récursif se fait avec $n+1$ et (sauf quand $n$ a atteint $64$).
 \item On a rajouté une post-condition essentielle et non-triviale: si la fonction ne lève pas d'exception, elle \og efface\fg{} les modifications qu'elle a faite sur la grille.
 \end{enumerate}
 On a en effet besoin de savoir ceci quand les appels récursifs sont infructueux. On utilise ici le prédicat $array\_eq$ de la bibliothèque standard car la structure est bel et bien modifiée dans certains cas (et l'égalité interne de \verb|Why3| n'est donc pas valide).
 
-Pour prouver cette post-condition d'égalité, on a du rajouter deux post-conditions à $check\_cell\_change$ pour indiquer que même si la fonction modifie son entrée, ces modifications ne sont pas visibles.
+Pour prouver cette post-condition d'égalité, on a dû rajouter deux post-conditions à $check\_cell\_change$ pour indiquer que même si la fonction modifie son entrée, ces modifications ne sont pas visibles.
 
 Enfin, on a rajouté une assertion dans le code de $solve\_aux$:
 
@@ -378,11 +384,11 @@ match g[n] with
 ...
 \end{minted}
 
-Celle-ci est nécessaire pour guider les prouveurs dans la marche à suivre.
+Celle-ci est nécessaire pour guider les prouveurs dans la marche à suivre (il y a en effet plusieurs lemmes intermédiaires de la question \ref{q22} qui brouillent les pistes).
 
 \subsection{}
 \label{q22}
-Les deux lemmes des questions \ref{q19} et \ref{q20} sont prouvés via une multitude de petits lemmes résultants du \og dépliage\fg{} des lemmes originaux. On donne par soucis de concision uniquement leur arbres de dépendances.
+Les deux lemmes des questions \ref{q19} et \ref{q20} sont prouvés via une multitude de petits lemmes résultants du \og dépliage\fg{} des lemmes originaux. On donne par souci de concision uniquement leurs arbres de dépendances.
 \begin{center}
   \begin{tikzpicture}[grow'=up]
     \Tree
