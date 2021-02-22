@@ -23,7 +23,7 @@
 \setminted[text]{frame=lines}
 
 \author{Alexandre Moine}
-\title{Rapport de projet pour le cours\\ 2.36.1 Preuve de programmes}
+\title{Rapport de projet pour le cours\\2.36.1 Preuve de programmes}
 
 \titleformat{\subsection}
 {\normalfont\normalsize\bfseries}{Question \thesubsection}{1em}{}
@@ -62,7 +62,7 @@ for i = 0 to a.length-3 do
   invariant { no_3_consecutive_zeros_sub a (i+2) }
   if v = last1 = last2 = 0 then raise TripleFound
 \end{minted}
-Les bornes de la boucle sont claires: on s'assure que les indices utiles aux tests sont valides. Pour l'invariant, on voit que la fonction lève une exception lorsqu'elle trouve 3 zéros consécutifs entre $i$ et $i+2$. À chaque fin de tour, on a donc qu'il n'y a pas 3 zéros consécutifs entre l'indice $0$ et $i+2$. À la fin, vu les bornes de la boucle, on a bien que $no\_3\_consecutive\_zeros\_sub\ a\ a.length$.
+Les bornes de la boucle permettent de s'assurer que les indices utiles aux tests sont valides. Pour l'invariant, on voit que la fonction lève une exception lorsqu'elle trouve 3 zéros consécutifs entre $i$ et $i+2$. À chaque fin de tour, on a donc qu'il n'y a pas 3 zéros consécutifs entre l'indice $0$ et $i+2$. À la fin, vu les bornes de la boucle, on a bien que $no\_3\_consecutive\_zeros\_sub\ a\ a.length$.
 
 \subsection{}
 \begin{minted}{text}
@@ -73,7 +73,7 @@ for i = 2 to a.length-1 do
   if v = last1 = last2 = 0 then raise TripleFound;
   last2 <- last1; last1 <- v;
 \end{minted}
-Les bornes de la boucle sont claires: les deux premiers éléments sont dans les variables $last$ et on veut parcourir tout le tableau.
+Les bornes de la boucle permettent de parcourir tout le tableau en sachant que les deux premiers éléments sont dans les variables $last$.
 Pour l'invariant, on voit que la fonction lève une exception lorsqu'elle trouve 3 zéros consécutifs entre $i-2$ et $i$. À chaque fin de tour, on a donc qu'il n'y a pas 3 zéros consécutifs entre l'indice $0$ et $i$. Pour prouver cet invariant, on a besoin d'un second invariant spécifiant que les variables \og last\fg{} contiennent bien ce qu'elles sont sensées contenir (les éléments précédents). À la fin, on a bien que $no\_3\_consecutive\_zeros\_sub\ a\ a.length$.
 
 \subsection{}
@@ -123,7 +123,7 @@ for i = 0 to a.length-1 do
   if a[i] = e then n <- 1+n;
 done; n
 \end{minted}
-L'invariant est ici clair: la référence $n$ compte bien le nombre d'éléments égaux à $e$ entre $0$ et $i$. À la fin de la boucle, on obtient la post-condition.
+L'invariant spécifie que la référence $n$ compte bien le nombre d'éléments égaux à $e$ entre $0$ et $i$. À la fin de la boucle, on obtient la post-condition.
 
 \subsection{}
 \begin{minted}{text}
@@ -178,12 +178,14 @@ let check_rule_1_for_chunk (g:takuzu_grid) start incr
   for i = 0 to 7 do
     invariant { 0 ≤ count_zeros < 3 ∧ count_zeros ≤ i}
     invariant { 0 ≤ count_ones < 3  ∧ count_ones ≤ i }
-    invariant { i > count_zeros -> acc g start incr (i-count_zeros-1) ≠ Zero }
-    invariant { i > count_ones  -> acc g start incr (i-count_ones-1)  ≠ One  }
+    invariant { i > count_zeros ->
+                  acc g start incr (i-count_zeros-1) ≠ Zero }
+    invariant { i > count_ones  ->
+                  acc g start incr (i-count_ones-1)  ≠ One  }
     invariant { ∀ j. j=1 ∨ j=2 -> count_zeros ≥ j ->
-                     acc g start incr (i-j) = Zero }
+                  acc g start incr (i-j) = Zero }
     invariant { ∀ j. j=1 ∨ j=2 -> count_ones  ≥ j ->
-                     acc g start incr (i-j) = One  }
+                  acc g start incr (i-j) = One  }
     invariant { no_3_consecutive_identical_elem g start incr i }
     ...
 \end{minted}
@@ -230,7 +232,8 @@ let check_rule_2_for_chunk (g:takuzu_grid) start incr : unit
   requires { g.length = 64 ∧ valid_chunk start incr }
   ensures { rule_2_for_chunk g start incr }
   raises { Invalid -> ¬(rule_2_for_chunk g start incr) } =
-  if count_number_of Zero g start incr > 4 || count_number_of One  g start incr > 4
+  if count_number_of Zero g start incr > 4
+     || count_number_of One g start incr > 4
   then raise Invalid
 \end{minted}
 
@@ -253,7 +256,7 @@ let check_identical_chunks g start1 start2 incr : bool
     | _ -> raise DiffFound
     end done; ...
 \end{minted}
-La définition du prédicat $identical\_chunks$ est claire: deux chunks sont identiques si et seulement s’ils sont égaux sur chaque indice et différent de $Empty$.
+La définition du prédicat $identical\_chunks$ permet de spécifier que deux chunks sont identiques si et seulement s’ils sont égaux sur chaque indice et différent de $Empty$.
 La vérification se fait via une boucle dont l'invariant est justement que les chuncks sont identiques jusqu'au rang courant.
 
 \subsection{}
@@ -298,7 +301,7 @@ let check_at_cell (g:takuzu_grid) (n:int) : unit
   raises { Invalid -> ¬(valid_for_cell g n) } = ...
 \end{minted}
 
-Avec tout le travail précédent, $check\_at\_cell\ g\ n$ est simple à spécifier: on requiert que la grille $g$ et l'argument $n$ soient raisonnables et on assure en sortie que la grille est valide pour la cellule $n$ si et seulement si l'exception n'a pas été levée.
+Avec tout le travail précédent, $check\_at\_cell\ g\ n$ se spécifie en quelques lignes: on requiert que la grille $g$ et l'argument $n$ soient raisonnables (c'est à dire que $g$ ait la taille d'une grille et $n$ désigne une case de la grille) et on assure en sortie que la grille est valide pour la cellule $n$ si et seulement si l'exception n'a pas été levée.
 
 \subsection{}
 \label{q18}
@@ -314,7 +317,7 @@ let check_cell_change (g:takuzu_grid) (n:int) (e:elem) : unit
   raises { Invalid -> array_eq g (old g)[n <- e] }
 \end{minted}
 
-La pré-condition $g.length = 64 \land 0 \leq n < 64$ permet de s'assurer que les arguments donnés sont raisonnables.
+La pré-condition permet de s'assurer que les arguments donnés sont raisonnables.
 
 \begin{itemize}
 \item L'assertion est difficile à prouver car on change $g$, il faudrait un lemme de cadre adéquat.
@@ -330,11 +333,11 @@ lemma valid_up_to_morphism : ∀ g1 g2 n.
   array_eq g1 g2 -> valid_up_to g1 n <-> valid_up_to g2 n
 \end{minted}
 
-En effet, on sait que $check\_cell\_change$ ne va faire qu'une modification à son entrée, et l'assertion ignore cette modification.\\
+En effet, on sait que $check\_cell\_change$ ne va faire qu'une modification à son entrée et l'assertion ignore cette modification.\\
 Nota Bene:
 \begin{enumerate}
 \item On utilise le prédicat $array\_eq$ de la bibliothèque standard pour être uniforme avec les spécifications de $solve\_aux$ plus tard: on peut la remplacer ici par l'égalité de Why3.
-\item On utilise une équivalence et non une simple implication pour prouver automatiquement des sous-buts de la preuve de $solve\_aux$.
+\item On utilise une équivalence et non une simple implication pour prouver automatiquement plus tard des sous-buts de la preuve de $solve\_aux$.
 \end{enumerate}
 
 \subsection{}
@@ -362,7 +365,7 @@ let rec solve_aux (g:takuzu_grid) (n:int) : unit
 On a modifié le contrat de l'énoncer en trois points:
 
 \begin{enumerate}
-\item On requiert que les arguments soient sensés.
+\item On requiert que les arguments soient raisonnables.
 \item Le variant est simple: l'appel récursif se fait avec $n+1$ jusqu'à ce que $n$ atteigne $64$.
 \item On a rajouté une post-condition essentielle et non-triviale: si la fonction ne lève pas d'exception, elle \og efface\fg{} les modifications qu'elle a faite sur la grille.
 \end{enumerate}
@@ -439,7 +442,7 @@ raises { NoSolution -> ¬(∃ g'. extends (old g) g' ∧ valid_up_to g' 64) }
 \end{minted}
 C'est à dire que si $solve$ lève une exception, cela veut dire que la grille n'est pas solvable (et par contraposée, si elle est solvable, l'exception $NoSolution$ ne sera pas levée).
 
-Une telle propriété est non triviale: il faudrait montrer que $solve\_aux$ explore bien toutes les possibilités.
+Une telle propriété est non-triviale: il faudrait montrer que $solve\_aux$ explore bien toutes les possibilités.
 
 \section{Conclusion}
 \subsection{}
