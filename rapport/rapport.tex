@@ -48,7 +48,7 @@ et a été fait avec \verb|Why3| version 1.3.3.
 predicate no_3_consecutive_zeros_sub (a:array int) (l:int)
 = ∀ i. 0 ≤ i < l-2 -> ¬(a[i] = a[i+1] = a[i+2] = 0)
 \end{minted}
-La borne supérieure de la variable $i$ est $l-2$ car en supposant $0 \leq l \leq a.length$, on veut que $0 \leq i+2 < a.length$.
+La borne supérieure de la variable $i$ est $l-2$ car en supposant $l$ compris entre $0$ et $a.length$, on veut que $i+2$ soit compris entre $0$ et $a.length$.
 
 \begin{minted}{text}
 predicate no_3_consecutive_zeros (a:array int)
@@ -224,7 +224,7 @@ Les pré-conditions de $count\_number\_of$ sont nécessaires à l'accesseur $acc
 \subsection{}
 \begin{minted}{text}
 predicate rule_2_for_chunk (g:takuzu_grid) (start incr:int) =
-  num_occ Zero g start incr 8 ≤ 4 ∧ num_occ One g start incr 8 ≤ 4
+  (num_occ Zero g start incr 8 ≤ 4) ∧ (num_occ One g start incr 8 ≤ 4)
 
 let check_rule_2_for_chunk (g:takuzu_grid) start incr : unit
   requires { g.length = 64 ∧ valid_chunk start incr }
@@ -254,7 +254,7 @@ let check_identical_chunks g start1 start2 incr : bool
     end done; ...
 \end{minted}
 La définition du prédicat $identical\_chunks$ est claire: deux chunks sont identiques si et seulement s’ils sont égaux sur chaque indice et différent de $Empty$.
-La vérification se fait via une boucle dont l'invariant est justement que les chuncks sont identiques.
+La vérification se fait via une boucle dont l'invariant est justement que les chuncks sont identiques jusqu'au rang courant.
 
 \subsection{}
 On donne l'explication uniquement pour les colonnes, le prédicat pour les lignes est équivalent.
@@ -318,7 +318,7 @@ La pré-condition $g.length = 64 \land 0 \leq n < 64$ permet de s'assurer que le
 
 \begin{itemize}
 \item L'assertion est difficile à prouver car on change $g$, il faudrait un lemme de cadre adéquat.
-\item La post-condition n'est pas facile à prouver car, à priori, il est difficile de savoir en quoi le fait que $check\_at\_cell$ ne soulève pas d'exception entraîne que le plateau est valide pour $n+1$.
+\item La post-condition de l'énoncer n'est pas facile à prouver car, à priori, il est difficile de savoir en quoi le fait que $check\_at\_cell$ ne soulève pas d'exception entraîne que le plateau est valide pour $n+1$.
 \end{itemize}
 
 \subsection{}
@@ -363,7 +363,7 @@ On a modifié le contrat de l'énoncer en trois points:
 
 \begin{enumerate}
 \item On requiert que les arguments soient sensés.
-\item Le variant est simple: l'appel récursif se fait avec $n+1$ et (sauf quand $n$ a atteint $64$).
+\item Le variant est simple: l'appel récursif se fait avec $n+1$ jusqu'à ce que $n$ atteigne $64$.
 \item On a rajouté une post-condition essentielle et non-triviale: si la fonction ne lève pas d'exception, elle \og efface\fg{} les modifications qu'elle a faite sur la grille.
 \end{enumerate}
 On a en effet besoin de savoir ceci quand les appels récursifs sont infructueux. On utilise ici le prédicat $array\_eq$ de la bibliothèque standard car la structure est bel et bien modifiée dans certains cas (et l'égalité interne de \verb|Why3| n'est donc pas valide).
@@ -391,7 +391,7 @@ Celle-ci est nécessaire pour guider les prouveurs dans la marche à suivre.
 \label{q22}
 Les deux lemmes des questions \ref{q19} et \ref{q20} sont prouvés via une multitude de petits lemmes résultants du \og dépliage\fg{} des lemmes originaux. On donne par souci de concision uniquement leurs arbres de dépendances.
 \begin{center}
-  \begin{tikzpicture}[grow'=up]
+  \begin{tikzpicture}[grow'=up,edge from parent/.style={draw,-latex}]]
     \Tree
     [.valid\_up\_to\_morphism
     [.valid\_up\_to\_morphism\_aux
@@ -415,7 +415,7 @@ Les deux lemmes des questions \ref{q19} et \ref{q20} sont prouvés via une multi
 \end{center}
 \bigskip
 \begin{center}
-  \begin{tikzpicture}[grow'=up]
+  \begin{tikzpicture}[grow'=up,edge from parent/.style={draw,-latex}]]
     \Tree
     [.valid\_up\_to\_extend
     [.rule1\_extend
