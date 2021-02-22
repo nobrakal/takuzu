@@ -301,7 +301,7 @@ let check_at_cell (g:takuzu_grid) (n:int) : unit
   raises { Invalid -> ¬(valid_for_cell g n) } = ...
 \end{minted}
 
-Avec tout le travail précédent, $check\_at\_cell\ g\ n$ se spécifie en quelques lignes: on requiert que la grille $g$ et l'argument $n$ soient raisonnables (c'est à dire que $g$ ait la taille d'une grille et $n$ désigne une case de la grille) et on assure en sortie que la grille est valide pour la cellule $n$ si et seulement si l'exception n'a pas été levée.
+Avec tout le travail précédent, $check\_at\_cell\ g\ n$ se spécifie en quelques lignes: on requiert que la grille $g$ et l'argument $n$ soient raisonnables (c'est à dire que $g$ ait la taille d'une grille de Takuzu et $n$ désigne une case de la grille) et on assure en sortie que la grille est valide pour la cellule $n$ si et seulement si l'exception n'a pas été levée.
 
 \subsection{}
 \label{q18}
@@ -369,7 +369,7 @@ On a modifié le contrat de l'énoncer en trois points:
 \item Le variant est simple: l'appel récursif se fait avec $n+1$ jusqu'à ce que $n$ atteigne $64$.
 \item On a rajouté une post-condition essentielle et non-triviale: si la fonction ne lève pas d'exception, elle \og efface\fg{} les modifications qu'elle a faite sur la grille.
 \end{enumerate}
-On a en effet besoin de savoir ceci quand les appels récursifs sont infructueux. On utilise ici le prédicat $array\_eq$ de la bibliothèque standard car la structure est bel et bien modifiée dans certains cas (et l'égalité interne de \verb|Why3| n'est donc pas valide).
+On a en effet besoin de savoir ceci quand les appels récursifs sont infructueux. On utilise ici le prédicat $array\_eq$ de la bibliothèque standard car la structure est bel et bien modifiée dans certains cas (et l'égalité interne de \verb|Why3| n'est donc pas valide\footnote{Tout du moins, je n'ai pas pu la prouver.}).
 
 Pour prouver cette post-condition d'égalité, on a dû rajouter deux post-conditions à $check\_cell\_change$ (voir question \ref{q18}) pour indiquer que même si la fonction modifie son entrée, ces modifications ne sont pas visibles.
 
@@ -446,7 +446,7 @@ Une telle propriété est non-triviale: il faudrait montrer que $solve\_aux$ exp
 
 \section{Conclusion}
 \subsection{}
-\verb|Why3| est une bête un peu difficile à appréhender. Pour un utilisateur de \verb|Coq|, le fait de devoir déléguer des preuves non-triviales est assez perturbant, surtout qu'un échec est souvent dû à un manque de lemme intermédiaire peu évident. Mon mode de développement pour les lemmes des dernières questions a souvent été de:
+\verb|Why3| est une bête un peu difficile à appréhender. Le fait de devoir déléguer des preuves non-triviales est assez perturbant, surtout qu'un échec est souvent dû à un manque de lemme intermédiaire peu évident. Mon mode de développement pour les lemmes des dernières questions a souvent été de:
 \begin{enumerate}
 \item Trouver un lemme non prouvé.
 \item Ouvrir \verb|Coq| et comprendre les hypothèses nécessaires à la preuve.
