@@ -74,7 +74,7 @@ for i = 2 to a.length-1 do
   last2 <- last1; last1 <- v;
 \end{minted}
 Les bornes de la boucle permettent de parcourir tout le tableau en sachant que les deux premiers éléments sont dans les variables $last$.
-Pour l'invariant, on voit que la fonction lève une exception lorsqu'elle trouve 3 zéros consécutifs entre $i-2$ et $i$. À chaque fin de tour, on a donc qu'il n'y a pas 3 zéros consécutifs entre l'indice $0$ et $i$. Pour prouver cet invariant, on a besoin d'un second invariant spécifiant que les variables \og last\fg{} contiennent bien ce qu'elles sont sensées contenir (les éléments précédents). À la fin, on a bien que $no\_3\_consecutive\_zeros\_sub\ a\ a.length$.
+Pour l'invariant, on voit que la fonction lève une exception lorsqu'elle trouve 3 zéros consécutifs entre $i-2$ et $i$. À chaque fin de tour, on a donc qu'il n'y a pas 3 zéros consécutifs entre l'indice $0$ et $i$. Pour prouver cet invariant, on a besoin d'un second invariant spécifiant que les variables \og last\fg{} contiennent bien ce qu'elles sont censées contenir (les éléments précédents). À la fin, on a bien que $no\_3\_consecutive\_zeros\_sub\ a\ a.length$.
 
 \subsection{}
 \label{q4}
@@ -431,7 +431,7 @@ Les deux lemmes des questions \ref{q19} et \ref{q20} sont prouvés via une multi
   \end{tikzpicture}
 \end{center}
 
-Tous ces lemmes sont prouvés automatiquement.  Une bonne partie d'entre eux montrent que nos fonctions sont des \emph{morphismes}, au sens que si on a $eq\_array\ g1\ g2$, alors nos fonctions ne distinguent pas $g1$ et $g2$.
+Tous ces lemmes sont prouvés automatiquement. Une bonne partie d'entre eux montrent que nos fonctions sont des \emph{morphismes}, au sens que si on a $eq\_array\ g1\ g2$, alors nos fonctions ne distinguent pas $g1$ et $g2$.
 
 On utilise cette notion d'égalité (et non pas l'égalité de \verb|Why3|) ici car elle sera utile pour prouver des sous-buts lors de la preuve de $solve$.
 
